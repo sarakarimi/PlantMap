@@ -2,6 +2,9 @@
 PlantImages/
 test_outputs/
 
+# Partial files
+._*
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
