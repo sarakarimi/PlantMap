@@ -32,7 +32,7 @@ RUN pip install -e ".[notebooks]"
 #RUN ./download_ckpts.sh
 # move everything in checkpoints to correct path
 #RUN mv /workspace/sam2/checkpoints/* /workspace/label-studio-ml-backend/label_studio_ml/examples/segment_anything_2_image/
-RUN cd /workspace/sam2/checkpoints/* /workspace/label-studio-ml-backend/label_studio_ml/examples/segment_anything_2_image/
+RUN cd /workspace/label-studio-ml-backend/label_studio_ml/examples/segment_anything_2_image/
 RUN mkdir segment-anything-2
 RUN cd segment-anything-2
 RUN mkdir checkpoints
