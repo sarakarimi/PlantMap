@@ -33,7 +33,23 @@ python huggingface_sam_test.py
 ## Create Flower Dataset for Unsupervised Classification
 
 ```
+mkdir masks
 conda activate <path or name>
 python create_all_flowers.py
 ```
 
+
+## Similarity Matching
+
+
+Due to laziness, the current code does only compare all flowers of a single picture. 
+
+
+
+```
+# Run the "Create Flower Dataset for Unsupervised Classification" step
+mkdir similarities
+
+conda activate <path or name>
+python feature_matching.py
+```
