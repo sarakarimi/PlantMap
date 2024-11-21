@@ -1,3 +1,5 @@
+#!/opt/conda/bin/python3
+
 import torch
 import timm
 import numpy as np

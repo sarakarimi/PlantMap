@@ -1,9 +1,18 @@
 #!/bin/bash
 
+sroot=$(dirname "$(realpath -s "$0")")
+dexec=(docker exec -it plantmap)
+
 case "$1" in
-  setup) docker build -t plantmap . ;;
-  masks) huggingface_sam_test.py ;;
-  flowers) create_all_flowers.py ;;
-  matching) feature_matching.py ;;
-  all) huggingface_sam_test.py; create_all_flowers.py; feature_matching.py ;;
+  build) docker build -t plantmap "${sroot}" ;;
+  run) docker run -dit -u 0 --gpus all --network=host --ipc=host --name plantmap plantmap bash ;;
+  start) docker start plantmap ;;
+  stop) docker stop plantmap ;;
+  attach) docker attach plantmap ;;
+  masks) "${dexec[@]}" sh -c "cd /workspace/sam2/sam2 && ./huggingface_sam_test.py" ;;
+  flowers) "${dexec[@]}" /workspace/create_all_flowers.py ;;
+  matching) "${dexec[@]}" /workspace/feature_matching.py ;;
+  all) "${dexec[@]}" /workspace/huggingface_sam_test.py; 
+       "${dexec[@]}" /workspace/create_all_flowers.py;
+       "${dexec[@]}" /workspace/feature_matching.py ;;
 esac

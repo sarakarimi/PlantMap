@@ -1,0 +1,10 @@
+#!/bin/bash
+
+case "$1" in
+  masks) /workspace/huggingface_sam_test.py ;;
+  flowers) /workspace/create_all_flowers.py ;;
+  matching) /workspace/feature_matching.py ;;
+  all) /workspace/huggingface_sam_test.py; 
+       /workspace/create_all_flowers.py;
+       /workspace/feature_matching.py ;;
+esac

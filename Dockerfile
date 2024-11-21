@@ -20,7 +20,8 @@ RUN apt update && apt install -y \
 RUN git clone https://github.com/HumanSignal/label-studio-ml-backend.git
 RUN git clone https://github.com/facebookresearch/sam2.git
 
-RUN mkdir masks test_results similarities
+RUN mkdir /workspace/sam2/sam2/{masks,test_results} similarities
+RUN mv /workspace/huggingface_sam_test.py /workspace/sam2/sam2/
 
 # huggingface hub
 RUN pip install huggingface_hub scipy

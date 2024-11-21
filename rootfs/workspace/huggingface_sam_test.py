@@ -1,3 +1,5 @@
+#!/opt/conda/bin/python3
+
 import torch
 from sam2.sam2_image_predictor import SAM2ImagePredictor
 from sam2.automatic_mask_generator import SAM2AutomaticMaskGenerator
