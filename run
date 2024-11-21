@@ -1,0 +1,9 @@
+#!/bin/bash
+
+case "$1" in
+  setup) docker build -t plantmap . ;;
+  masks) huggingface_sam_test.py ;;
+  flowers) create_all_flowers.py ;;
+  matching) feature_matching.py ;;
+  all) huggingface_sam_test.py; create_all_flowers.py; feature_matching.py ;;
+esac
