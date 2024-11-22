@@ -4,7 +4,7 @@ sroot=$(dirname "$(realpath -s "$0")")
 dexec=(docker exec -it plantmap)
 
 case "$1" in
-  build) docker build -t plantmap "${sroot}" ;;
+  build) docker build --no-cache -t plantmap "${sroot}" ;;
   run) docker run -dit -u 0 --gpus all --network=host --ipc=host --name plantmap plantmap bash ;;
   start) docker start plantmap ;;
   stop) docker stop plantmap ;;
