@@ -17,19 +17,18 @@ RUN apt update && apt install -y \
     iputils-ping \
     unzip
 
-RUN git clone https://github.com/HumanSignal/label-studio-ml-backend.git
 RUN git clone https://github.com/facebookresearch/sam2.git
+RUN git clone https://github.com/scaleoutsystems/fedn.git
 
 RUN mkdir /workspace/sam2/sam2/{masks,test_results} similarities
 RUN mv /workspace/huggingface_sam_test.py /workspace/sam2/sam2/
 
 # huggingface hub
-RUN pip install huggingface_hub scipy
+RUN pip install huggingface_hub scipy ultralytics fedn
 
-# Label studio
-WORKDIR /workspace/label-studio-ml-backend
+# FedN libraries
+WORKDIR /workspace/fedn
 RUN pip install -e .
-RUN pip install -r ./label_studio_ml/examples/segment_anything_2_image/requirements.txt
 
 # SAM2
 # https://github.com/facebookresearch/sam2
@@ -40,14 +39,5 @@ RUN pip install -e ".[notebooks]"
 #RUN ./download_ckpts.sh
 # move everything in checkpoints to correct path
 #RUN mv /workspace/sam2/checkpoints/* /workspace/label-studio-ml-backend/label_studio_ml/examples/segment_anything_2_image/
-
-RUN mkdir -p /workspace/label-studio-ml-backend/label_studio_ml/examples/segment_anything_2_image/segment-anything-2/checkpoints
-WORKDIR /workspace/label-studio-ml-backend/label_studio_ml/examples/segment_anything_2_image/segment-anything-2/checkpoints
-RUN wget "https://dl.fbaipublicfiles.com/segment_anything_2/072824/sam2_hiera_large.pt"
-# go back to examples
-WORKDIR /workspace/label-studio-ml-backend/label_studio_ml/examples
-
-# maybe we run this
-RUN label-studio-ml start ./segment_anything_2_image
 
 WORKDIR /
