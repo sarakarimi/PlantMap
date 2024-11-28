@@ -1,5 +1,5 @@
-# PlantMap
-PlantMap: federated learning for segmentation, classification, and detection of weed species in aerial images taken from farm fields for WASP course 2024.
+# PlantMap: Federated learning for segmentation, classification, and detection of weed species in aerial images taken from farm fields
+
 
 
 ## Setup Environment
@@ -18,38 +18,74 @@ pip install scipy
 
 ```
 
-Place all images in data/Hyperlapse
-
-
-## Create Masks
+#### Create Masks
 
 ```
+# Place all images in data/Hyperlapse
 mkdir masks
 mkdir test_results
-python huggingface_sam_test.py 
+python scripts/huggingface_sam_test.py 
 
 ```
 
-## Create Flower Dataset for Unsupervised Classification
+#### Create Flower Dataset for Unsupervised Classification
 
 ```
 mkdir masks
 conda activate <path or name>
-python create_all_flowers.py
+python unsupervised_classification/create_all_flowers.py
 ```
 
 
-## Similarity Matching
-
-
+#### Similarity Matching
 Due to laziness, the current code does only compare all flowers of a single picture. 
-
-
 
 ```
 # Run the "Create Flower Dataset for Unsupervised Classification" step
 mkdir similarities
 
 conda activate <path or name>
-python feature_matching.py
+python unsupervised_classification/feature_matching.py
 ```
+
+------------------------------------------------------------------------------------------------------------------------------------------
+### Project members:
+
+Derya Akbaba - Linkoping University <br>
+Sofia Andersson - Lund University <br>
+Sara karimi - KTH Royal Institute of Technology <br>
+Markus Fritzsche - Linkoping University <br>
+Xavante Erickson -  <br>
+
+## Introduction
+TODO
+
+## Methods
+TODO
+
+
+### Segmentation of objects in the images
+We use the [Segment Anything Model (SAM)](https://github.com/facebookresearch/segment-anything) to perform segmentation on the images. 
+
+### Classification of flower species in the images
+With segmentations at hand, we explore two approaches for the classification part: <br>
+(1) unsupervised classification method that uses feature matching, and (2) supervised classification that uses pre-trained [CLIP](https://github.com/openai/CLIP) model.
+
+
+#### 1. Unsupervised Classification
+TODO add description of the method
+
+
+#### 2. Supervised Classification
+TODO add description of the method
+
+## Data Annotation
+
+
+## Experiments & Results
+TODO
+
+## Conclusions & future work
+TODO
+
+## References

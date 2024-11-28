@@ -1,3 +1,5 @@
+from cProfile import label
+
 import torch
 from sam2.sam2_image_predictor import SAM2ImagePredictor
 from sam2.automatic_mask_generator import SAM2AutomaticMaskGenerator
@@ -7,6 +9,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from PIL import Image
 from tqdm import tqdm
+from datasets import load_dataset
 
 
 # Define some helper functions
@@ -136,6 +139,7 @@ sam2 = build_sam2_hf(
 
 mask_generator_2 = SAM2AutomaticMaskGenerator(
     model=sam2,
+    label="daisy",
     points_per_side=32,
     points_per_batch=64,
     pred_iou_thresh=0.7,
@@ -148,14 +152,17 @@ mask_generator_2 = SAM2AutomaticMaskGenerator(
     use_m2m=False,
 )
 
-# Load the images
-folder_with_images = "PlantImages/"
-list_of_images = os.listdir(folder_with_images)
+
+ds = load_dataset("gotdairyya/plant_images")
+print("dataset loaded")
+
+# testing with one sample
+test_image = ds['train'][0]['image']
+list_of_images = [test_image]
 
 
 with torch.inference_mode(), torch.autocast("cuda", dtype=torch.bfloat16):
-    for image in tqdm(list_of_images, desc="Processing images"):
-        test_image = Image.open(folder_with_images + image)
+    for test_image in tqdm(list_of_images, desc="Processing images"):
         test_image = np.array(test_image.convert("RGB"))
 
         fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(20, 10))
@@ -169,5 +176,5 @@ with torch.inference_mode(), torch.autocast("cuda", dtype=torch.bfloat16):
         show_anns(masks, ax=ax2)
         ax2.set_title("Generated Masks")
         ax2.axis("off")
-        plt.savefig("test_outputs/comparison_maskedit_" + image[:-4] + ".png")
+        plt.savefig("test_outputs/comparison_maskedit" + ".png")
         plt.close()

@@ -1,7 +1,9 @@
 # Ignore image folder
 PlantImages/
 test_outputs/
-
+.idea
+pretrained
+output
 # Partial files
 ._*
 
