@@ -1,4 +1,4 @@
-# PlantMap: Federated learning for segmentation, classification, and detection of weed species in aerial images taken from farm fields
+# PlantMap: Federated learning for segmentation, detection, and classification of weed species in aerial images taken from farm fields
 
 
 
@@ -60,27 +60,33 @@ Xavante Erickson -  <br>
 ## Introduction
 TODO
 
-## Methods
-TODO
+## Scalable solution
+TODO mention we are using FedN and a short intro to federated learning and aggregation methods
+
+## Machine Learning Methods
+Since the solution entails performing **image segmentation and object detection/classification** tasks on images, the following sections detail the machine learning approaches employed for each specific task.
+
+### Segmentation of images
+We use the  to perform segmentation on the images. 
+To perform image segmentation, we leverage the [Segment Anything Model (SAM)](https://github.com/facebookresearch/segment-anything), a versatile and state-of-the-art tool designed for robust segmentation across diverse image datasets.
 
 
-### Segmentation of objects in the images
-We use the [Segment Anything Model (SAM)](https://github.com/facebookresearch/segment-anything) to perform segmentation on the images. 
+### Classification of objects in the images
+With the segmentations in place, we explore two approaches for the classification task:
 
-### Classification of flower species in the images
-With segmentations at hand, we explore two approaches for the classification part: <br>
-(1) unsupervised classification method that uses feature matching, and (2) supervised classification that uses pre-trained [CLIP](https://github.com/openai/CLIP) model.
+1. **Unsupervised Classification** : This method relies on feature matching to group segments of the original image that match with a given example without requiring labeled data.
 
+2. **Supervised Classification** : This approach utilizes the pre-trained [CLIP](https://github.com/openai/CLIP) model, leveraging its powerful multi-modal capabilities to classify segments based on learned visual and the provided textual prompts.
 
-#### 1. Unsupervised Classification
+#### Unsupervised Classification
 TODO add description of the method
 
 
-#### 2. Supervised Classification
+#### Supervised Classification
 TODO add description of the method
 
 ## Data Annotation
-
+TODO
 
 ## Experiments & Results
 TODO
