@@ -100,8 +100,13 @@ With the segmentations in place, we explore two approaches for the classificatio
 
 2. **Supervised Classification** : This approach utilizes the pre-trained [CLIP](https://github.com/openai/CLIP) model, leveraging its powerful multi-modal capabilities to classify segments based on learned visual and the provided textual prompts.
 
-#### Unsupervised Classification
+#### (Semi-/Un-)supervised Classification
 TODO add description of the method
+
+We use SAM in order to get flower images without background as this is usually pretty accurate using a pretrained SAM2 model. 
+
+For every possible wildflower, we select one candidate as reference image. 
+We finetune a masked-autoencoder, discard the decoder and use the encoder part of the model to retrieve image features. 
 
 
 #### Supervised Classification
