@@ -170,6 +170,7 @@ cython_debug/
 #  and can be added to the global gitignore or merged into this file.  For a more nuclear
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
+<<<<<<< HEAD
 
 # Fedn
 
@@ -191,3 +192,11 @@ logs/
 *.out
 package/
 client_files/
+||||||| parent of 2d3a728 (Add MAE model for finetuning)
+=======
+
+
+# lightning
+lightning_logs/
+lightning_logs/*
+>>>>>>> 2d3a728 (Add MAE model for finetuning)

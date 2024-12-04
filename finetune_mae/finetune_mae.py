@@ -1,37 +1,48 @@
 import torch
-from data import NextImageBatchGenerator
-from transformers import ViTImageProcessor, ViTMAEForPreTraining, ViTMAEConfig
-from tqdm import tqdm
+import os
+import lightning as L
+import argparse
 
-NUM_EPOCHS = 10
-BATCH_SIZE = 64
-LEARNING_RATE = 1e-4
-DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
+from torch.utils.data import DataLoader
+from data import GeneratorDataset
+from model import Model
+from lightning.pytorch.loggers import WandbLogger
+
+
+def parse_args():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--data_root", type=str, default="../data2")
+    parser.add_argument("--num_epochs", type=int, default=10)
+    parser.add_argument("--batch_size", type=int, default=64)
+    parser.add_argument(
+        "--learning_rate", type=float, default=1e-4
+    )  # TODO: Not used yet
+    return parser.parse_args()
 
 
 def main():
-    data_gen = NextImageBatchGenerator()
+    args = parse_args()
+    data_root = args.data_root
+    num_epochs = args.num_epochs
+    batch_size = args.batch_size
 
-    model = ViTMAEForPreTraining.from_pretrained("facebook/vit-mae-base").to(DEVICE)
-    optimizer = torch.optim.AdamW(model.parameters(), lr=1e-4)
+    image_files = os.listdir(data_root)
+    image_files = [os.path.join(data_root, file) for file in image_files]
+    train_files = image_files[: int(0.8 * len(image_files))]
+    val_files = image_files[int(0.8 * len(image_files)) :]
 
-    for epoch in range(NUM_EPOCHS):
-        total_loss = 0.0
-        with tqdm(enumerate(data_gen())) as pbar:
-            for i, batch in pbar:
-                pbar.set_description_str(f"Epoch {epoch}")
-                inputs = batch.to(DEVICE)
+    train_generator = GeneratorDataset(train_files, bs=batch_size)
+    val_generator = GeneratorDataset(val_files, bs=batch_size)
 
-                outputs = model(**inputs)
-                loss = outputs.loss  # Reconstruction loss
+    train_loader = DataLoader(train_generator, batch_size=None)
+    val_loader = DataLoader(val_generator, batch_size=None)
 
-                # Backpropagation
-                optimizer.zero_grad()
-                loss.backward()
-                optimizer.step()
+    model = Model()
 
-                total_loss += loss.item()
-                pbar.set_postfix_str(f"Loss: {total_loss / (i + 1):.4f}")
+    logger = WandbLogger(project="plant_map")
+    trainer = L.Trainer(max_epochs=num_epochs, logger=logger)
+    trainer.fit(model, train_loader, val_loader)
+
 
 if __name__ == "__main__":
     main()
