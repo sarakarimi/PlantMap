@@ -23,7 +23,8 @@ def main() -> None:
                 mask_path = os.path.join(mask_folder, mask_file)
 
                 image_array = np.array(Image.open(file_path))
-
+                if not os.path.exists(mask_path):
+                    continue
                 masks = torch.load(mask_path)
 
                 for i, mask in enumerate(masks):
@@ -41,10 +42,13 @@ def main() -> None:
                     cropped_image = masked_image[
                         y_min : y_min + height, x_min : x_min + width
                     ]
+                    cropped_image = image_array[
+                        y_min : y_min + height, x_min : x_min + width
+                    ]
                     flowers.append(cropped_image)
 
                     pbar.set_description_str(f"Progress: {i} / {len(masks)}")
-                torch.save(flowers, f"data/{file_name}.pt")
+                torch.save(flowers, f"data2/{file_name}.pt")
                 flowers = []
 
 
