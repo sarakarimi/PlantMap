@@ -4,7 +4,7 @@ import argparse
 
 from torch.utils.data import DataLoader
 from data_auto import GeneratorDataset
-from model import Model
+from model_pretrain import Model
 from lightning.pytorch.loggers import WandbLogger
 
 
