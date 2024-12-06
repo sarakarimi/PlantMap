@@ -7,8 +7,8 @@ from PIL import Image
 
 
 def main() -> None:
-    image_folder = "data/Hyperlapse/"
-    mask_folder = "masks/"
+    image_folder = "../data/Hyperlapse/"
+    mask_folder = "../masks/"
 
     file_names = os.listdir(image_folder)
 
