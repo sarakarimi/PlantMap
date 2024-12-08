@@ -91,7 +91,7 @@ class Model(L.LightningModule):
             ]
         )
         scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=10, gamma=0.1)
-        return [optimizer], [scheduler]
+        return [optimizer]
 
     def validation_step(self, batch, batch_idx) -> torch.Tensor:
         batch1, batch2 = batch
