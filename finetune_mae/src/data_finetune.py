@@ -1,11 +1,11 @@
 import torch
 import random
-import matplotlib.pyplot as plt
 
 from PIL import Image
 from transformers import AutoImageProcessor
 from torch.utils.data import IterableDataset
 from torchvision import transforms
+from utils.no_flower_filter import no_flower_filter
 
 
 class NextImageBatchGenerator:
@@ -40,6 +40,8 @@ class NextImageBatchGenerator:
             images = torch.load(img_path)
             random.shuffle(images)
             for img in images:
+                if no_flower_filter(img):
+                    continue
                 img = Image.fromarray(img)
                 img1 = self._augmentations(img)
                 img2 = self._augmentations(img)

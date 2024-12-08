@@ -28,7 +28,12 @@ class Model(L.LightningModule):
         return loss
 
     def configure_optimizers(self):
-        return torch.optim.AdamW(self.parameters(), lr=1e-4)
+        optimizer = torch.optim.AdamW([
+            {"params": self._encoder.parameters(), "lr": 1e-5},
+            {"params": self._similarity_loss.parameters(), "lr": 1e-4},
+        ])
+        scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=10, gamma=0.1)
+        return [optimizer], [scheduler]
 
     def validation_step(self, batch, batch_idx) -> torch.Tensor:
         batch1, batch2 = batch

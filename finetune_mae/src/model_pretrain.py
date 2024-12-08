@@ -18,7 +18,7 @@ class Model(L.LightningModule):
         return outputs.loss
 
     def configure_optimizers(self):
-        return torch.optim.AdamW(self.parameters(), lr=1e-4)
+        return torch.optim.AdamW(self.parameters(), lr=1e-3)
 
     def validation_step(self, batch, batch_idx) -> torch.Tensor:
         outputs = self.forward(batch)
