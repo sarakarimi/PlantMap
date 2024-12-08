@@ -30,7 +30,7 @@ def main():
     ckpt = L.pytorch.callbacks.ModelCheckpoint(
         monitor="valid/loss",
         dirpath="checkpoints",
-        filename="pretrain",
+        filename="finetune",
         save_top_k=1,
         enable_version_counter=False,  # creates model-v0, model-v1, etc.
     )
