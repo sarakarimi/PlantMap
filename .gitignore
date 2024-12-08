@@ -174,3 +174,17 @@ cython_debug/
 # lightning
 lightning_logs/
 lightning_logs/*
+wandb/
+wandb/*
+data2/*
+similarities/
+similarities/*
+*.ipynb
+logs/
+logs/*
+checkpoints/
+checkpoints/*
+*.lock
+*.ckpt
+.vscode/
+.vscode/*

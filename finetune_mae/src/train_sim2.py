@@ -4,7 +4,7 @@ import argparse
 
 from torch.utils.data import DataLoader
 from data.data_cont import GeneratorDataset
-from models.model_cont import Model
+from models.model_byol import Model
 from lightning.pytorch.loggers import WandbLogger
 
 
@@ -53,7 +53,7 @@ def main():
 
     model = Model(checkpoint, vit)
 
-    logger = WandbLogger(project="plant_map") if use_logger else None
+    logger = WandbLogger(project="plant_map", save_dir="logs") if use_logger else None
     trainer = L.Trainer(max_epochs=num_epochs, logger=logger, callbacks=callbacks)
     trainer.fit(model, train_loader, val_loader)
 
