@@ -27,6 +27,15 @@ def main():
     batch_size = args.batch_size
     checkpoint = args.checkpoint
 
+    ckpt = L.pytorch.callbacks.ModelCheckpoint(
+        monitor="valid/loss",
+        dirpath="checkpoints",
+        filename="pretrain",
+        save_top_k=1,
+        enable_version_counter=False,  # creates model-v0, model-v1, etc.
+    )
+    callbacks = [ckpt]
+
     image_files = os.listdir(data_root)
     image_files = [os.path.join(data_root, file) for file in image_files]
     train_files = image_files[: int(0.8 * len(image_files))]
@@ -41,7 +50,7 @@ def main():
     model = Model(checkpoint)
 
     logger = WandbLogger(project="plant_map")
-    trainer = L.Trainer(max_epochs=num_epochs, logger=logger)
+    trainer = L.Trainer(max_epochs=num_epochs, logger=logger, callbacks=callbacks)
     trainer.fit(model, train_loader, val_loader)
 
 
