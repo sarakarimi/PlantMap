@@ -13,7 +13,7 @@ def parse_args():
     parser.add_argument("--data_root", type=str, default="../data2")
     parser.add_argument("--num_epochs", type=int, default=1000)
     parser.add_argument("--batch_size", type=int, default=64)
-    parser.add_argument("--use_logger", type=bool, action="store_true")
+    parser.add_argument("--use_logger", action="store_true")
     parser.add_argument("--checkpoint", type=str, default="model.ckpt")
     parser.add_argument(
         "--learning_rate", type=float, default=1e-4
