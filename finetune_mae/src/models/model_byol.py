@@ -2,11 +2,26 @@ import lightning as L
 import torch
 import copy
 import torch.nn.functional as F
+import torch.nn as nn
 
 from utils.similarity_loss import SimilarityLoss
 from models.model_pretrain import Model as PretrainedModel
 from transformers import CLIPVisionModel
 from transformers import Dinov2Model
+
+
+class MLP(nn.Module):
+    def __init__(self, input_dim, hidden_dim, output_dim):
+        super().__init__()
+        self.net = nn.Sequential(
+            nn.Linear(input_dim, hidden_dim),
+            nn.BatchNorm1d(hidden_dim),
+            nn.ReLU(),
+            nn.Linear(hidden_dim, output_dim),
+        )
+
+    def forward(self, x):
+        return self.net(x)
 
 
 class Model(L.LightningModule):
@@ -28,6 +43,8 @@ class Model(L.LightningModule):
         else:
             raise ValueError(f"Unknown model type: {vit}")
         self._encoder2 = copy.deepcopy(self._encoder)  # target network
+        self._mlp = MLP(768, 1000, 768)
+        self.ema_decay = 0.99
         self._similarity_loss = SimilarityLoss()
 
     def forward(self, pixel_values):
@@ -40,8 +57,12 @@ class Model(L.LightningModule):
         return loss
 
     def __shared_step(self, batch1, batch2):
-        outputs1_online = self._encoder(batch1.pixel_values).last_hidden_state[:, 0]
-        outputs2_online = self._encoder2(batch2.pixel_values).last_hidden_state[:, 0]
+        outputs1_online = self._mlp(
+            self._encoder(batch1.pixel_values).last_hidden_state[:, 0]
+        )
+        outputs2_online = self._mlp(
+            self._encoder2(batch2.pixel_values).last_hidden_state[:, 0]
+        )
         with torch.no_grad():
             outputs1_target = self._encoder(batch1.pixel_values).last_hidden_state[:, 0]
             outputs2_target = self._encoder2(batch2.pixel_values).last_hidden_state[
@@ -65,7 +86,7 @@ class Model(L.LightningModule):
     def configure_optimizers(self):
         optimizer = torch.optim.AdamW(
             [
-                {"params": self._encoder.parameters(), "lr": 1e-4},
+                {"params": self._encoder.parameters(), "lr": 1e-3},
             ]
         )
         scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=10, gamma=0.1)

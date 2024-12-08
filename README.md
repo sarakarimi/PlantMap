@@ -108,6 +108,17 @@ We use SAM in order to get flower images without background as this is usually p
 For every possible wildflower, we select one candidate as reference image. 
 We finetune a masked-autoencoder, discard the decoder and use the encoder part of the model to retrieve image features. 
 
+To train the model, we chose to compare two different approaches, [BYOL](https://arxiv.org/abs/2006.07733) and [SimCLR](https://arxiv.org/abs/2002.05709), both methods for learning visual representations. 
+An encoder model maps each image into a vector. By normalizing the vector (unit vector) and comparing them using cosine-similarity, we get a probability of both images belonging to the same class or not. 
+
+##### Challenges
+
+* The number of distinct flower classes is comparably low compared to the number of overall images
+* Just by looking on the raw data, it is clear that the dataset is not evenly distributed, i.e., unbalanced. 
+* Many flowers of different classes look similar, e.g., all flowers with white blossoms. 
+* SAM is not perfect, i.e., it predicts false positives and 
+
+
 
 #### Supervised Classification
 TODO add description of the method
