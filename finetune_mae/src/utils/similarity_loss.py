@@ -10,11 +10,9 @@ class SimilarityLoss(nn.Module):
 
     def forward(self, z1, z2):
         batch_size = z1.size(0)
-        print(z1.shape, z2.shape)
         z = torch.cat([z1, z2], dim=0)  # Concatenate both augmented views
         similarity_matrix = self.cosine_similarity(z.unsqueeze(1), z.unsqueeze(0))
         mask = torch.eye(batch_size * 2, device=z.device).bool()
-        print(similarity_matrix.shape, mask.shape)
         positive_sim = torch.cat(
             [
                 similarity_matrix[i, i + batch_size].unsqueeze(0)
