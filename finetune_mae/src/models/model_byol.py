@@ -48,7 +48,8 @@ class Model(L.LightningModule):
         self._similarity_loss = SimilarityLoss()
 
     def forward(self, pixel_values):
-        return self._encoder(pixel_values).last_hidden_state[:, 0]
+        # Not quite sure why target network is used here
+        return self._encoder2(pixel_values).last_hidden_state[:, 0]
 
     def training_step(self, batch, batch_idx: int) -> torch.Tensor:
         batch1, batch2 = batch
@@ -61,10 +62,10 @@ class Model(L.LightningModule):
             self._encoder(batch1.pixel_values).last_hidden_state[:, 0]
         )
         outputs2_online = self._mlp(
-            self._encoder2(batch2.pixel_values).last_hidden_state[:, 0]
+            self._encoder(batch2.pixel_values).last_hidden_state[:, 0]
         )
         with torch.no_grad():
-            outputs1_target = self._encoder(batch1.pixel_values).last_hidden_state[:, 0]
+            outputs1_target = self._encoder2(batch1.pixel_values).last_hidden_state[:, 0]
             outputs2_target = self._encoder2(batch2.pixel_values).last_hidden_state[
                 :, 0
             ]
