@@ -13,17 +13,17 @@ class Model(L.LightningModule):
         self._lr = lr
         if vit == "MAE":
             checkpoint = "facebook/vit-mae-base" if checkpoint is None else checkpoint
-            self._encoder = PretrainedModel.load_from_checkpoint(checkpoint)._model.vit
+            self._encoder = PretrainedModel.load_from_checkpoint(checkpoint)._model.vit.train()
         elif vit == "CLIP":
             if checkpoint is not None:
                 print("WARNING: Ignoring checkpoint for CLIP model")
             checkpoint = "openai/clip-vit-base-patch32" 
-            self._encoder = CLIPVisionModel.from_pretrained(checkpoint)
+            self._encoder = CLIPVisionModel.from_pretrained(checkpoint).train()
         elif vit == "DINO":
             if checkpoint is not None:
                 print("WARNING: Ignoring checkpoint for DINO model")
             checkpoint = "facebook/dinov2-base"
-            self._encoder = Dinov2Model.from_pretrained(checkpoint)
+            self._encoder = Dinov2Model.from_pretrained(checkpoint).train()
         else:
             raise ValueError(f"Unknown model type: {vit}")
         self._similarity_loss = SimilarityLoss()
