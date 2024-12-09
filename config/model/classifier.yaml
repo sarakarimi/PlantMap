@@ -1,0 +1,4 @@
+dataset_name: "sarakarimi30/PlantMap"
+finetune_checkpoint: True
+dropout: 0.0
+pretrained_checkpoint: "model_checkpoints/CLIP_AdamW_classifier_best_model-epoch=05-val_accuracy=91.05.ckpt"

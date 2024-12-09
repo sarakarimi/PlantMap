@@ -1,0 +1,4 @@
+dataset_name: "sarakarimi30/PlantMap"
+finetune_checkpoint: True
+dropout: 0.1
+pretrained_checkpoint: "model_checkpoints/CLIP_AdamW_best_model-epoch=14-val_loss=0.38.ckpt"
