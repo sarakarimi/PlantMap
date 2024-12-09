@@ -17,7 +17,7 @@ class Model(L.LightningModule):
             if checkpoint is None:
                 self._encoder = ViTMAEModel.from_pretrained("facebook/vit-mae-base").train().to(device)
             else: 
-                self._encoder = PretrainedModel.load_from_checkpoint(checkpoint)._model.vit.train()
+                self._encoder = PretrainedModel.load_from_checkpoint(checkpoint)._model.vit.train().to(device)
         elif vit == "CLIP":
             if checkpoint is not None:
                 print("WARNING: Ignoring checkpoint for CLIP model")
