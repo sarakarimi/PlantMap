@@ -1,5 +1,6 @@
 import torch
 import torch.nn as nn
+import torch.nn.functional as F
 import lightning as L
 from models.model_pretrain import Model as PretrainedModel
 from transformers import CLIPVisionModel
@@ -39,8 +40,7 @@ class Model(L.LightningModule):
         self._similarity_loss = SimilarityLoss()
         
         self.queue_size = 1024
-        self.queue = torch.randn(128, self.queue_size)
-        self.queue = nn.functional.normalize(self.queue, dim=0)
+        self.register_buffer("queue", F.normalize(torch.randn(128, self.queue_size), dim=0))
         self.queue_ptr = 0  
         
         self.temperature = 0.07
@@ -55,6 +55,8 @@ class Model(L.LightningModule):
     
     def training_step(self, batch, batch_idx):
         batch1, batch2 = batch  # Two augmented views of the same images
+        batch1 = batch1.to(self.device)
+        batch2 = batch2.to(self.device)
         
         q1, q2 = self(batch1), self(batch2)
         
