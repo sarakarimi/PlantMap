@@ -708,10 +708,10 @@ def main(cfg: DictConfig) -> None:
     trainer.fit(model, train_dataloaders=train_loader, val_dataloaders=val_loader)
 
     # Get the best epoch and corresponding accuracy
-    best_epoch = checkpoint_callback.best_model_epoch
+    best_path = checkpoint_callback.best_model_path
     best_val_accuracy = checkpoint_callback.best_model_score
 
-    print(f"Best epoch: {best_epoch}")
+    print(f"Best model path: {best_path}")
     print(f"Best validation accuracy: {best_val_accuracy:.4f}")
 
 
