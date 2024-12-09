@@ -15,9 +15,6 @@ def parse_args():
     parser.add_argument("--batch_size", type=int, default=64)
     parser.add_argument("--use_logger", action="store_true")
     parser.add_argument("--checkpoint", type=str, default="model.ckpt")
-    parser.add_argument(
-        "--learning_rate", type=float, default=1e-4
-    )  # TODO: Not used yet
     parser.add_argument("--vit", type=str, default="MAE") # options: MAE, clip, DINO
     return parser.parse_args()
 
@@ -51,7 +48,9 @@ def main():
     train_loader = DataLoader(train_generator, batch_size=None)
     val_loader = DataLoader(val_generator, batch_size=None)
 
-    model = Model(checkpoint, vit)
+    lr = 0.3 * batch_size / 256
+
+    model = Model(lr, checkpoint, vit)
 
     logger = WandbLogger(project="plant_map") if use_logger else None
     trainer = L.Trainer(max_epochs=num_epochs, logger=logger, callbacks=callbacks)
