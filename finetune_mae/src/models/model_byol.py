@@ -25,8 +25,9 @@ class MLP(nn.Module):
 
 
 class Model(L.LightningModule):
-    def __init__(self, checkpoint: str | None, vit: str = "MAE") -> None:
+    def __init__(self, lr, checkpoint: str | None, vit: str = "MAE") -> None:
         super().__init__()
+        self._lr = lr
         if vit == "MAE":
             checkpoint = "facebook/vit-mae-base" if checkpoint is None else checkpoint
             self._encoder = PretrainedModel.load_from_checkpoint(checkpoint)._model.vit
@@ -87,7 +88,7 @@ class Model(L.LightningModule):
     def configure_optimizers(self):
         optimizer = torch.optim.AdamW(
             [
-                {"params": self._encoder.parameters(), "lr": 1e-3},
+                {"params": self._encoder.parameters(), "lr": self.lr},
             ]
         )
         scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=10, gamma=0.1)
