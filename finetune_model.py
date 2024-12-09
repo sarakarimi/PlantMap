@@ -4,6 +4,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from datasets import load_dataset
+from huggingface_hub import hf_hub_download
 from lightning.pytorch import Trainer
 from lightning.pytorch.callbacks import (
     EarlyStopping,
@@ -652,11 +653,15 @@ def main(cfg: DictConfig) -> None:
 
     # Either finetune base model or load a pretrained model
     if cfg.model.finetune_checkpoint:
+        checkpoint_path = hf_hub_download(
+            repo_id="SIAndersson/PlantMapCheckpoints",
+            filename=cfg.model.pretrained_checkpoint,
+        )
         # Pretrained model was contrastive
         if pretrained_str == "contrastive":
             clip_model = CLIPModel.from_pretrained(model_name).train()
             base_model = CLIPLightningWithContrastive.load_from_checkpoint(
-                cfg.model.pretrained_checkpoint, clip_model=clip_model
+                checkpoint_path, clip_model=clip_model
             )
             model = CLIPContrastiveClassifier(
                 base_model,
@@ -667,7 +672,7 @@ def main(cfg: DictConfig) -> None:
             )
         # Pretrained model was categorical
         else:
-            model = CLIPClassifier.load_from_checkpoint(cfg.model.pretrained_checkpoint)
+            model = CLIPClassifier.load_from_checkpoint(checkpoint_path)
             model.classifier = nn.Linear(model.classifier.in_features, num_classes)
             model.accuracy = MulticlassAccuracy(num_classes=num_classes)
             model.lr = cfg.training.learning_rate
