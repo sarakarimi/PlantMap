@@ -88,7 +88,7 @@ class Model(L.LightningModule):
     def configure_optimizers(self):
         optimizer = torch.optim.AdamW(
             [
-                {"params": self._encoder.parameters(), "lr": self.lr},
+                {"params": self._encoder.parameters(), "lr": self._lr},
             ]
         )
         scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=10, gamma=0.1)
