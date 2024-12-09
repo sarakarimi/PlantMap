@@ -8,8 +8,9 @@ from transformers import Dinov2Model
 
 
 class Model(L.LightningModule):
-    def __init__(self, checkpoint: str | None, vit: str = "MAE") -> None:
+    def __init__(self, lr: float, checkpoint: str | None, vit: str = "MAE") -> None:
         super().__init__()
+        self._lr = lr
         if vit == "MAE":
             checkpoint = "facebook/vit-mae-base" if checkpoint is None else checkpoint
             self._encoder = PretrainedModel.load_from_checkpoint(checkpoint)._model.vit
