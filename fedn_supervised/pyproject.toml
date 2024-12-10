@@ -1,0 +1,17 @@
+[project]
+name = "fedn-supervised"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "huggingface>=0.0.1",
+    "huggingface-hub>=0.26.5",
+    "numpy>=2.2.0",
+    "scipy>=1.14.1",
+    "torch>=2.5.1",
+    "torchvision>=0.20.1",
+]
+
+[tool.uv.workspace]
+members = ["client"]
