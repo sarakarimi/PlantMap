@@ -1,8 +1,4 @@
 entry_points:
-    build:
-        command: uv sync
-    startup:
-        command: uv run data.py
     train:
         command: uv run train.py
     validate:
