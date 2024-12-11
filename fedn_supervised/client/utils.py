@@ -25,6 +25,9 @@ def get_hydra_conf():
     """
     with open("overrides.txt", "r") as f:
         overrides = f.read().split("\n")
+    if overrides[-1] == "":
+        overrides = overrides[:-1]
+    
     with initialize(config_path="config", job_name="CLIP", version_base="1.1"):
         cfg = compose(config_name="CLIP", overrides=overrides)
     return cfg
