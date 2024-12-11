@@ -187,4 +187,4 @@ lightning_logs/
 *.ipynb
 *.JPG
 logs/
-
+*.tgz

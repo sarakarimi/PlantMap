@@ -6,7 +6,6 @@ from datasets import load_dataset
 from lightning.pytorch import Trainer
 from lightning.pytorch.callbacks import (
     LearningRateMonitor,
-    ModelCheckpoint,
 )
 
 from data import ImageTextDataset, collate_fn
@@ -19,10 +18,10 @@ from fedn.utils.helpers.helpers import save_metadata
 from model import (
     CLIPClassifier,
     CLIPContrastiveClassifier,
-    CLIPLightningWithContrastive,
 )
 from data import preprocess_dataset
 from utils import get_dataset_indices, get_hydra_conf
+from utils import load_model_from_cfg, load_parameters, save_parameters
 
 
 def main(in_model_path: str, out_model_path: str, cfg: DictConfig) -> None:
@@ -91,20 +90,10 @@ def main(in_model_path: str, out_model_path: str, cfg: DictConfig) -> None:
     #     val_dataset, batch_size=cfg.training.batch_size, collate_fn=collate_fn
     # )
 
-    ModelCheckpoint.FILE_EXTENSION = ""
-    checkpoint_callback = ModelCheckpoint(
-        dirpath="./",
-        filename=out_model_path,
-        enable_version_counter=False,
-    )
-
     lr_monitor = LearningRateMonitor(logging_interval="epoch")
 
-    model_cls = (
-        CLIPContrastiveClassifier if pretrained_str == "contrastive" else CLIPClassifier
-    )
-
-    model = model_cls.load_from_checkpoint(in_model_path)
+    model = load_model_from_cfg(num_classes, cfg)
+    model = load_parameters(model, in_model_path)
 
     # Freeze the feature extractor
     for param in model.clip_model.parameters():
@@ -115,7 +104,7 @@ def main(in_model_path: str, out_model_path: str, cfg: DictConfig) -> None:
         "max_epochs": 1, # TODO: Check if there fedN only supports num_epochs=1
         "accelerator": "auto",
         "log_every_n_steps": 10,
-        "callbacks": [checkpoint_callback, lr_monitor],
+        "callbacks": [lr_monitor],
     }
 
     device = "cuda" if torch.cuda.is_available() else "cpu"
@@ -130,9 +119,9 @@ def main(in_model_path: str, out_model_path: str, cfg: DictConfig) -> None:
     trainer = Trainer(**trainer_params)
 
     trainer.fit(model, train_dataloaders=train_loader)
+    save_parameters(model, out_model_path)
 
     # Get the best epoch and corresponding accuracy
-    best_path = checkpoint_callback.best_model_path
 
     metadata = {
         # num_examples are mandatory
@@ -143,9 +132,8 @@ def main(in_model_path: str, out_model_path: str, cfg: DictConfig) -> None:
     }
 
     # FedN metadata
-    save_metadata(metadata, best_path)
+    save_metadata(metadata, out_model_path)
 
-    print(f"Best model path: {best_path}")
 
 
 if __name__ == "__main__":

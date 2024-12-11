@@ -43,3 +43,9 @@ overrides.txt
  model.pretrained_checkpoint=<insert path here>
  ```
 
+ # Create FEDn packages
+
+ ```
+ uv run fedn package create --path client
+ ```
+

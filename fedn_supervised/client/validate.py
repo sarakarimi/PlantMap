@@ -18,7 +18,7 @@ from model import (
     CLIPContrastiveClassifier,
 )
 from data import preprocess_dataset
-from utils import get_dataset_indices, get_hydra_conf
+from utils import get_dataset_indices, get_hydra_conf, load_model_from_cfg, load_parameters
 
 
 def main(in_model_path: str, out_json_path: str, cfg: DictConfig) -> None:
@@ -72,6 +72,9 @@ def main(in_model_path: str, out_json_path: str, cfg: DictConfig) -> None:
     train_dataset = ImageTextDataset(
         train_images, train_labels, categories, clip_processor
     )
+
+    num_classes = len(categories)
+    
     val_dataset = ImageTextDataset(val_images, val_labels, categories, clip_processor)
 
     train_loader = DataLoader(
@@ -86,11 +89,8 @@ def main(in_model_path: str, out_json_path: str, cfg: DictConfig) -> None:
 
     lr_monitor = LearningRateMonitor(logging_interval="epoch")
 
-    model_cls = (
-        CLIPContrastiveClassifier if pretrained_str == "contrastive" else CLIPClassifier
-    )
-
-    model = model_cls.load_from_checkpoint(in_model_path)
+    model = load_model_from_cfg(num_classes, cfg)
+    model = load_parameters(model, in_model_path)
 
     # Freeze the feature extractor
     for param in model.clip_model.parameters():
