@@ -58,7 +58,15 @@ Markus Fritzsche - Linkoping University <br>
 Xavante Erickson - Lund University and Ericsson<br>
 
 ## Introduction
-TODO
+The state of Flowering in the spring when grazing begins has a profound impact on cattle and the environment.
+Timing the release of cattle for grazing is a balance between promotion of flora in the environment and the well being of the cattle.
+It is desirable to release cattle as soon as all critical flora has flowered, maximizing time outdoors and feed for the cattle.
+The areas where cattle graze can stretch for miles, an area that is untenable for small farmers to cover every day.
+With automated drones the areas could be covered cheaper and faster.
+Combining automated drones with Machine Learning the detection and identification of key flora can be made in an autonomous fashion.
+This pipeline can provide real-time statistics to small as well as large farmers, decreasing price and optimizing the release of cattle for grazing.
+This work has focused on providing a scalable and private method of training an aggregated model to perform detection and identification of key flora.
+State-of-the-art model CLIP is fine-tuned with a unique labeled flora dataset, using federated learning to ensure scalability and privacy.
 
 ## Scalable solution
 
