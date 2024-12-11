@@ -11,12 +11,8 @@ from lightning.pytorch.loggers import CSVLogger
 
 from torch.utils.data import DataLoader
 from transformers import CLIPProcessor
-from fedn.utils.helpers.helpers import save_metadata
+from fedn.utils.helpers.helpers import save_metrics
 
-from model import (
-    CLIPClassifier,
-    CLIPContrastiveClassifier,
-)
 from data import preprocess_dataset
 from utils import get_dataset_indices, get_hydra_conf, load_model_from_cfg, load_parameters
 
@@ -128,13 +124,15 @@ def main(in_model_path: str, out_json_path: str, cfg: DictConfig) -> None:
         "test_accuracy": val_out["val_accuracy"],
     }
 
-    save_metadata(report, out_json_path)
+    print(out_json_path)
+
+    save_metrics(report, out_json_path)
 
 
 if __name__ == "__main__":
     # Set high precision for matrix multiplication (for tensor cores)
     torch.set_float32_matmul_precision("high")
     in_model_path = sys.argv[1]
-    out_model_path = sys.argv[2]
+    out_json_path = sys.argv[2]
     cfg = get_hydra_conf()
-    main(in_model_path, out_model_path, cfg)
+    main(in_model_path, out_json_path, cfg)

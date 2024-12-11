@@ -15,10 +15,6 @@ from torch.utils.data import DataLoader
 from transformers import CLIPProcessor
 from fedn.utils.helpers.helpers import save_metadata
 
-from model import (
-    CLIPClassifier,
-    CLIPContrastiveClassifier,
-)
 from data import preprocess_dataset
 from utils import get_dataset_indices, get_hydra_conf
 from utils import load_model_from_cfg, load_parameters, save_parameters
