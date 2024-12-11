@@ -55,7 +55,7 @@ Derya Akbaba - Linkoping University <br>
 Sofia Andersson - Lund University <br>
 Sara karimi - KTH Royal Institute of Technology <br>
 Markus Fritzsche - Linkoping University <br>
-Xavante Erickson -  <br>
+Xavante Erickson - Lund University and Ericsson<br>
 
 ## Introduction
 TODO
