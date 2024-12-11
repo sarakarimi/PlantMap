@@ -1,0 +1,7 @@
+entry_points:
+    build: 
+        command: uv run build.py
+    train:
+        command: uv run train.py
+    validate:
+        command: uv run validate.py
