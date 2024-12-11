@@ -17,7 +17,7 @@ dependencies = [
     "transformers>=4.47.0",
     "scikit-learn>=1.6.0",
     "datasets>=3.2.0",
-    "fedn>=0.20.0",
+    "fedn==0.18.0",
 ]
 
 [tool.uv.workspace]
