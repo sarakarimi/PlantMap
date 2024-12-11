@@ -49,3 +49,19 @@ overrides.txt
  uv run fedn package create --path client
  ```
 
+# Run 1-6 clients clients
+
+
+Download 6 client.yaml files [here](https://fedn.scaleoutsystems.com/marfr65/plantmap-olf/clientlist) and store them as ```client_files/cliend{1..6}.yaml```.
+On berzelius:
+```
+chmod +x run.sh
+./run.sh
+```
+
+Alternatively, you can run 
+```
+chmod +x exp.sh
+./exp.sh i
+```
+where ```i``` is a number between 1 to 6. 

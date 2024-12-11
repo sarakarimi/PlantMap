@@ -188,3 +188,6 @@ lightning_logs/
 *.JPG
 logs/
 *.tgz
+*.out
+package/
+client_files/
