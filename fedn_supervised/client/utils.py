@@ -19,10 +19,12 @@ def get_dataset_indices(ds_indices: int) -> list[int]:
     print(start_idx, end_idx, len(ds_indices))
     return ds_indices[start_idx:end_idx]
 
-def get_hydra_conf(overrides):
+def get_hydra_conf():
     """
     Workaround for Hydra initialization in the training script while preserving the first arguments for fedN.
     """
+    with open("overrides.txt", "r") as f:
+        overrides = f.read().split("\n")
     with initialize(config_path="config", job_name="CLIP", version_base="1.1"):
         cfg = compose(config_name="CLIP", overrides=overrides)
     return cfg

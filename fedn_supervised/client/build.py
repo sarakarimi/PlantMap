@@ -120,5 +120,5 @@ def main(cfg: DictConfig) -> None:
 if __name__ == "__main__":
     # Set high precision for matrix multiplication (for tensor cores)
     torch.set_float32_matmul_precision("high")
-    cfg = get_hydra_conf(sys.argv[1:])
+    cfg = get_hydra_conf()
     main(cfg)

@@ -31,3 +31,15 @@ uv run fedn run train --path client --input trained.npz --output output.json
 
 ```
 
+## Overwrite config
+
+To change the [hydra config](https://hydra.cc/docs/intro/), add all arguments to ```client/overrides.txt``` without any empty line. 
+ 
+ ### Example
+
+overrides.txt
+ ```
+ model.dropout=0.1
+ model.pretrained_checkpoint=<insert path here>
+ ```
+

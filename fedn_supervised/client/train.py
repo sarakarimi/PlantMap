@@ -153,5 +153,5 @@ if __name__ == "__main__":
     torch.set_float32_matmul_precision("high")
     in_model_path = sys.argv[1]
     out_model_path = sys.argv[2]
-    cfg = get_hydra_conf(sys.argv[3:])
+    cfg = get_hydra_conf()
     main(in_model_path, out_model_path, cfg)
