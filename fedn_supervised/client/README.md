@@ -59,7 +59,7 @@ chmod +x run.sh
 ./run.sh
 ```
 
-Alternatively, you can run 
+Alternatively, you can run ```sbatch exp.sh <client ID>```.
 ```
 chmod +x exp.sh
 ./exp.sh i

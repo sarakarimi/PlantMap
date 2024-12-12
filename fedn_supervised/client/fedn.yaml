@@ -1,7 +1,7 @@
 entry_points:
     build: 
-        command: uv run build.py
+        command: uv run --no-cache build.py
     train:
-        command: uv run train.py
+        command: uv run --no-cache train.py
     validate:
-        command: uv run validate.py
+        command: uv run --no-cache validate.py
