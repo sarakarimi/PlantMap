@@ -86,11 +86,15 @@ def main(in_model_path: str, out_json_path: str, cfg: DictConfig) -> None:
     lr_monitor = LearningRateMonitor(logging_interval="epoch")
 
     model = load_model_from_cfg(num_classes, cfg)
-    model = load_parameters(model, in_model_path)
 
     # Freeze the feature extractor
     for param in model.clip_model.parameters():
         param.requires_grad = False
+
+        
+    model = load_parameters(model, in_model_path)
+
+    
 
     trainer_params = {
         "logger": [logger],

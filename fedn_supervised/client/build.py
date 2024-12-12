@@ -30,6 +30,10 @@ def main(cfg: DictConfig) -> None:
 
     model = load_model_from_cfg(num_classes, cfg)
 
+    # NOTE: Freezing here allows to store subset of weights
+    for param in model.clip_model.parameters():
+        param.requires_grad = False
+
     save_parameters(model, "seed.npz")
 
 

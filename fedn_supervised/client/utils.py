@@ -10,11 +10,16 @@ from fedn.utils.helpers.helpers import get_helper
 from omegaconf import DictConfig
 from huggingface_hub import hf_hub_download
 from transformers import CLIPModel
-from model import CLIPClassifier, CLIPContrastiveClassifier, CLIPLightningWithContrastive
+from model import (
+    CLIPClassifier,
+    CLIPContrastiveClassifier,
+    CLIPLightningWithContrastive,
+)
 from torchmetrics.classification import MulticlassAccuracy
 
 HELPER_MODULE = "numpyhelper"
 helper = get_helper(HELPER_MODULE)
+
 
 def get_dataset_indices(ds_indices: int) -> list[int]:
     """
@@ -34,6 +39,7 @@ def get_dataset_indices(ds_indices: int) -> list[int]:
     print(start_idx, end_idx, len(ds_indices))
     return ds_indices[start_idx:end_idx]
 
+
 def get_hydra_conf():
     """
     Workaround for Hydra initialization in the training script while preserving the first arguments for fedN.
@@ -42,7 +48,7 @@ def get_hydra_conf():
         overrides = f.read().split("\n")
     if overrides[-1] == "":
         overrides = overrides[:-1]
-    
+
     with initialize(config_path="config", job_name="CLIP", version_base="1.1"):
         cfg = compose(config_name="CLIP", overrides=overrides)
     return cfg
@@ -110,6 +116,7 @@ def load_model_from_cfg(num_classes, cfg: DictConfig) -> L.LightningModule:
         )
     return model
 
+
 def save_parameters(model: L.LightningModule, out_path: str) -> None:
     """Save model paramters to file.
 
@@ -118,8 +125,11 @@ def save_parameters(model: L.LightningModule, out_path: str) -> None:
     :param out_path: The path to save to.
     :type out_path: str
     """
-    parameters_np = [val.cpu().numpy() for _, val in model.state_dict().items()]
+    parameters_np = [
+        val.cpu().numpy() for _, val in model.state_dict().items() if val.requires_grad
+    ]
     helper.save(parameters_np, out_path)
+
 
 def load_parameters(model: L.LightningModule, model_path: str) -> L.LightningModule:
     """Load model parameters from file and populate model.
@@ -132,6 +142,10 @@ def load_parameters(model: L.LightningModule, model_path: str) -> L.LightningMod
     parameters_np = helper.load(model_path)
 
     params_dict = zip(model.state_dict().keys(), parameters_np)
-    state_dict = collections.OrderedDict({key: torch.tensor(x) for key, x in params_dict})
-    model.load_state_dict(state_dict, strict=True)
+    state_dict = collections.OrderedDict(
+        {key: torch.tensor(x) for key, x in params_dict}
+    )
+    model.load_state_dict(
+        state_dict, strict=False
+    )  # NOTE: false bcs state_dict has only classifier
     return model

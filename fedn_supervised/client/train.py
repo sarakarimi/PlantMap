@@ -89,15 +89,15 @@ def main(in_model_path: str, out_model_path: str, cfg: DictConfig) -> None:
     lr_monitor = LearningRateMonitor(logging_interval="epoch")
 
     model = load_model_from_cfg(num_classes, cfg)
-    model = load_parameters(model, in_model_path)
 
-    # Freeze the feature extractor
     for param in model.clip_model.parameters():
         param.requires_grad = False
 
+    model = load_parameters(model, in_model_path)
+
     trainer_params = {
         "logger": [logger],
-        "max_epochs": 1, # TODO: Check if there fedN only supports num_epochs=1
+        "max_epochs": hyper_params["epochs"], 
         "accelerator": "auto",
         "log_every_n_steps": 10,
         "callbacks": [lr_monitor],
