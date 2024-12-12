@@ -58,7 +58,7 @@ Markus Fritzsche - Linkoping University <br>
 Xavante Erickson - Lund University and Ericsson<br>
 
 ## Introduction
-TODO
+Understanding the composition of wildflowers can be important in certain use cases. But given that wildflowers are small, sparsely scattered in large areas, and have short blooming cycles, tracking the composition is challenging. We build on prior work by Schouten et al. [1] who contribute an expert-annotated dataset of wildflower images from the Netherlands. Our work illustrates a federated learning approach to wildflower identification. 
 
 ## Scalable solution
 
@@ -76,7 +76,7 @@ Federated learning comes with advantages such as **(i) privacy**: as sensitive d
 
 #### **Aggregation Methods in Federated Learning**
 A critical aspect of FL is the aggregation of model updates to ensure the global model improves with each round. Common aggregation methods include:
-- **Federated Averaging (FedAvg)**: A simple yet effective method introduced by Sun et al. [1], where the global model is updated by averaging the weights or gradients received from clients, weighted by the size of each client's dataset.
+- **Federated Averaging (FedAvg)**: A simple yet effective method introduced by Sun et al. [2], where the global model is updated by averaging the weights or gradients received from clients, weighted by the size of each client's dataset.
 - **Gradient Aggregation**: In scenarios where gradients are shared, these can be aggregated directly to update the global model.
 - **Adaptive Aggregation**: Advanced methods that account for heterogeneity in client data, ensuring that clients with diverse data distributions contribute effectively to the global model.
 
@@ -145,4 +145,5 @@ TODO
 TODO
 
 ## References
-[1] Sun, Tao, Dongsheng Li, and Bao Wang. "Decentralized federated averaging." IEEE Transactions on Pattern Analysis and Machine Intelligence 45.4 (2022): 4289-4301.
+[1] Schouten, Gerard, Bas SHT Michielsen, and Barbara Gravendeel. "Data-centric AI approach for automated wildflower monitoring." Plos one 19.9 (2024): e0302958.
+[2] Sun, Tao, Dongsheng Li, and Bao Wang. "Decentralized federated averaging." IEEE Transactions on Pattern Analysis and Machine Intelligence 45.4 (2022): 4289-4301.
