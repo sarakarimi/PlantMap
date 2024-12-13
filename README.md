@@ -55,10 +55,10 @@ Derya Akbaba - Linkoping University <br>
 Sofia Andersson - Lund University <br>
 Sara karimi - KTH Royal Institute of Technology <br>
 Markus Fritzsche - Linkoping University <br>
-Xavante Erickson -  <br>
+Xavante Erickson - Lund University and Ericsson<br>
 
 ## Introduction
-TODO
+Understanding the composition of wildflowers can be important in certain use cases. But given that wildflowers are small, sparsely scattered in large areas, and have short blooming cycles, tracking the composition is challenging. We build on prior work by Schouten et al. [1] who contribute an expert-annotated dataset of wildflower images from the Netherlands. Our work illustrates a federated learning approach to wildflower identification. 
 
 ## Scalable solution
 
@@ -76,7 +76,7 @@ Federated learning comes with advantages such as **(i) privacy**: as sensitive d
 
 #### **Aggregation Methods in Federated Learning**
 A critical aspect of FL is the aggregation of model updates to ensure the global model improves with each round. Common aggregation methods include:
-- **Federated Averaging (FedAvg)**: A simple yet effective method introduced by Sun et al. [1], where the global model is updated by averaging the weights or gradients received from clients, weighted by the size of each client's dataset.
+- **Federated Averaging (FedAvg)**: A simple yet effective method introduced by Sun et al. [2], where the global model is updated by averaging the weights or gradients received from clients, weighted by the size of each client's dataset.
 - **Gradient Aggregation**: In scenarios where gradients are shared, these can be aggregated directly to update the global model.
 - **Adaptive Aggregation**: Advanced methods that account for heterogeneity in client data, ensuring that clients with diverse data distributions contribute effectively to the global model.
 
@@ -107,6 +107,25 @@ TODO add description of the method
 #### Supervised Classification
 TODO add description of the method
 
+Using the Eindhoven Wildflower Dataset (EWD) to finetune the CLIP model on a variety of flowers, the theory was that this might improve performance on the target dataset, as the CLIP model would have seen many more images of flowers than those available in the dataset. Even if the labels do not overlap fully, they should be close enough in embedding space to hopefully provide the model with a better starting point. The models were trained in two ways:
+1. **Cross-categorical entropy.** The CLIP model parameters were trained along with a classifier head for the EWD.
+2. **Supervised Contrastive Loss.** This is the method that the CLIP model was originally trained with. Images and labels for the EWD were fed into the model and the contrastive loss was then used to update the CLIP weights.
+
+
+| Max accuracy | Loss     | Retrained? | Optimizer | Learning rate | Batch size | Dropout | First epoch acc |
+| ------------ | -------- | ---------- | --------- | ------------- | ---------- | ------- | --------------- |
+| 89.3232      | CCE      | True       | SGD       | 0.02          | 32         | 0       | 88.44           |
+| 85.4976      | CCE      | False      | SGD       | 0.02          | 32         | 0       | 87.68           |
+| 90.2979      | CCE      | True       | SGD       | 0.001         | 32         | 0       | 85.32           |
+| 91.411       | CCE      | False      | SGD       | 0.001         | 32         | 0       | 66.51           |
+| 86.5553      | Contrast | True       | AdaDelta  | 0.04          | 32         | 0.2     | 72.17           |
+| 86.77        | Contrast | True       | AdaDelta  | 0.04          | 32         | 0       | 72.88           |
+| 88.67        | Contrast | True       | AdaDelta  | 0.4           | 32         | 0       | 86.78           |
+| 90.48        | Contrast | True       | AdaDelta  | 4.5           | 32         | 0       | 85.61           |
+| 89.76        | Contrast | True       | AdamW     | 0.008         | 32         | 0.1     | 87.04           |
+| 88.61        | Contrast | True       | AdamW     | 0.01          | 32         | 0       | 85.55           |
+
+
 ## Datasets
 Since we started with an unannotated dataset of raw images, it was necessary to first annotate and label the dataset to generate training data required for training an image object detection and classification model. To achieve this, we used the pre-trained SAM+CLIP approach described in the **Method** section.
 Specifically, the raw images were fed into the pre-trained **SAM** model, which performed segmentation to identify distinct regions in the images. 
@@ -126,4 +145,5 @@ TODO
 TODO
 
 ## References
-[1] Sun, Tao, Dongsheng Li, and Bao Wang. "Decentralized federated averaging." IEEE Transactions on Pattern Analysis and Machine Intelligence 45.4 (2022): 4289-4301.
+[1] Schouten, Gerard, Bas SHT Michielsen, and Barbara Gravendeel. "Data-centric AI approach for automated wildflower monitoring." Plos one 19.9 (2024): e0302958.
+[2] Sun, Tao, Dongsheng Li, and Bao Wang. "Decentralized federated averaging." IEEE Transactions on Pattern Analysis and Machine Intelligence 45.4 (2022): 4289-4301.

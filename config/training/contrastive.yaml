@@ -1,0 +1,6 @@
+epochs: 100
+device: "cuda:0"
+num_gpus: 1
+batch_size: 32
+learning_rate: 0.008
+optimizer: "AdamW"

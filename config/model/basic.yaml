@@ -1,0 +1,4 @@
+dataset_name: "sarakarimi30/PlantMap"
+finetune_checkpoint: False
+dropout: 0.0
+pretrained_checkpoint: " "

@@ -3,7 +3,8 @@ PlantImages/
 test_outputs/
 .idea
 pretrained
-output
+outputs/
+logs/
 # Partial files
 ._*
 
