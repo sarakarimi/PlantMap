@@ -1,7 +1,6 @@
 from omegaconf import DictConfig
 import torch
 import sys
-import random
 from datasets import load_dataset
 from lightning.pytorch import Trainer
 from lightning.pytorch.callbacks import LearningRateMonitor
@@ -50,7 +49,6 @@ def main(in_model_path: str, out_json_path: str, cfg: DictConfig) -> None:
     # ds = load_dataset("sarakarimi30/PlantMap")
 
     ds = load_dataset(dataset_name)
-    random.seed(187)
     ds_size = len(ds["train"])
     all_indices = list(range(ds_size))
     split_idx = int(len(all_indices) * 0.8)
@@ -62,6 +60,8 @@ def main(in_model_path: str, out_json_path: str, cfg: DictConfig) -> None:
     dataset = ds["train"]
     # TODO: Hacky trick to get all categories without changing the code too much -> bad code design
     _, _, categories = preprocess_dataset(dataset, all_indices)
+    categories = sorted(categories)
+
     train_images, train_labels, _ = preprocess_dataset(dataset, train_indices)
     val_images, val_labels, _ = preprocess_dataset(dataset, val_indices)
 
@@ -94,7 +94,6 @@ def main(in_model_path: str, out_json_path: str, cfg: DictConfig) -> None:
         
     model = load_parameters(model, in_model_path)
 
-    
 
     trainer_params = {
         "logger": [logger],

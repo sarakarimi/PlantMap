@@ -32,7 +32,8 @@ def get_dataset_indices(ds_indices: int) -> list[int]:
     num_agents = int(num_agents)
     agent_id = os.environ["AGENT_ID"]
     agent_id = int(agent_id)
-
+    
+    random.seed(187)
     random.shuffle(ds_indices)
     start_idx = agent_id * int(len(ds_indices) / int(num_agents))
     end_idx = start_idx + int(len(ds_indices) / int(num_agents))
@@ -51,6 +52,7 @@ def get_hydra_conf():
 
     with initialize(config_path="config", job_name="CLIP", version_base="1.1"):
         cfg = compose(config_name="CLIP", overrides=overrides)
+    print(cfg)
     return cfg
 
 
@@ -130,7 +132,10 @@ def save_parameters(model: L.LightningModule, out_path: str) -> None:
     :type out_path: str
     """
     parameters_np = [
-        val.cpu().numpy() for _, val in model.state_dict().items() if val.requires_grad
+        val.cpu().numpy()
+        for key, val in model.state_dict().items()
+        if key in dict(model.named_parameters())
+        and dict(model.named_parameters())[key].requires_grad
     ]
     helper.save(parameters_np, out_path)
 
@@ -145,11 +150,22 @@ def load_parameters(model: L.LightningModule, model_path: str) -> L.LightningMod
     """
     parameters_np = helper.load(model_path)
 
-    params_dict = zip(model.state_dict().keys(), parameters_np)
+    keys = model.state_dict().keys()
+    keys = [key for key in keys if model.state_dict()[key].requires_grad]
+
+    keys = [
+        key
+        for key, val in model.state_dict().items()
+        if key in dict(model.named_parameters())
+        and dict(model.named_parameters())[key].requires_grad
+    ]
+
+    params_dict = zip(keys, parameters_np)
     state_dict = collections.OrderedDict(
         {key: torch.tensor(x) for key, x in params_dict}
     )
     model.load_state_dict(
         state_dict, strict=False
     )  # NOTE: false bcs state_dict has only classifier
+
     return model

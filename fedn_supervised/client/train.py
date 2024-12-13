@@ -1,7 +1,6 @@
 from omegaconf import DictConfig
 import torch
 import sys
-import random
 from datasets import load_dataset
 from lightning.pytorch import Trainer
 from lightning.pytorch.callbacks import (
@@ -53,26 +52,28 @@ def main(in_model_path: str, out_model_path: str, cfg: DictConfig) -> None:
     # ds = load_dataset("sarakarimi30/PlantMap")
 
     ds = load_dataset(dataset_name)
-    random.seed(187)
     ds_size = len(ds["train"])
     all_indices = list(range(ds_size))
     split_idx = int(len(all_indices) * 0.8)
     train_indices = all_indices[:split_idx]
-    val_indices = all_indices[split_idx:]
+    # val_indices = all_indices[split_idx:]
 
     train_indices = get_dataset_indices(train_indices)
 
     dataset = ds["train"]
     # TODO: Hacky trick to get all categories without changing the code too much -> bad code design
     _, _, categories = preprocess_dataset(dataset, all_indices)
+    categories = sorted(categories)
+
     train_images, train_labels, _ = preprocess_dataset(dataset, train_indices)
-    val_images, val_labels, _ = preprocess_dataset(dataset, val_indices)
+    # val_images, val_labels, _ = preprocess_dataset(dataset, val_indices)
 
     num_classes = len(categories)
 
     train_dataset = ImageTextDataset(
         train_images, train_labels, categories, clip_processor
     )
+
     # NOTE: val dataset only used in validation script
     # val_dataset = ImageTextDataset(val_images, val_labels, categories, clip_processor)
 
@@ -82,9 +83,6 @@ def main(in_model_path: str, out_model_path: str, cfg: DictConfig) -> None:
         shuffle=True,
         collate_fn=collate_fn,
     )
-    # val_loader = DataLoader(
-    #     val_dataset, batch_size=cfg.training.batch_size, collate_fn=collate_fn
-    # )
 
     lr_monitor = LearningRateMonitor(logging_interval="epoch")
 
@@ -94,6 +92,7 @@ def main(in_model_path: str, out_model_path: str, cfg: DictConfig) -> None:
         param.requires_grad = False
 
     model = load_parameters(model, in_model_path)
+
 
     trainer_params = {
         "logger": [logger],
