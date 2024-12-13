@@ -58,9 +58,19 @@ Markus Fritzsche - Linkoping University <br>
 Xavante Erickson - Lund University and Ericsson<br>
 
 ## Introduction
-Understanding the composition of wildflowers can be important in certain use cases. But given that wildflowers are small, sparsely scattered in large areas, and have short blooming cycles, tracking the composition is challenging. We build on prior work by Schouten et al. [1] who contribute an expert-annotated dataset of wildflower images from the Netherlands. Our work illustrates a federated learning approach to wildflower identification. 
+Understanding and managing the biodiversity of farming fields is crucial for sustainable agriculture and efficient resource utilization.
+Having accurate information about the composition of wildflowers play an important role in managing the biodiversity achieving more sustainable and efficient farming practices.
+But given that wildflowers are small, sparsely scattered in large areas, and have short blooming cycles, tracking the composition using traditional methods are challenging. 
+
+This project aims to create a "plant map" of farm fields by identifying specific plant species at various coordinates, provided using aerial imaging captured by drones.
+The resulting map will provide critical insights into plant distribution, enabling farmers to optimize pesticide application and tailor soil mineral combinations for enhanced crop growth. 
+By leveraging state=of-the-art computer vision techniques, pre-trained vision models are fine-tuned on datasets collected from farms. To allow farmers' data privacy and we employ a federated learning approach where each farmer can have local trainings without the need to share data globally.
+We build on prior work by Schouten et al. [1] who contribute an expert-annotated dataset of wildflower images from the Netherlands. We hope can be small contribution towards smarter and more sustainable farming.
+
 
 ## Scalable solution
+The main scalable solution in this project is built upon a federated learning architecture, enabling efficient training across distributed datasets while preserving data privacy. 
+To support this approach, we leverage the FedN tool, a framework designed for federated learning applications. Below, we provide a brief introduction to federated learning and the FedN tool.
 
 ### Federated Learning and FedN
 
@@ -100,8 +110,23 @@ With the segmentations in place, we explore two approaches for the classificatio
 
 2. **Supervised Classification** : This approach utilizes the pre-trained [CLIP](https://github.com/openai/CLIP) model, leveraging its powerful multi-modal capabilities to classify segments based on learned visual and the provided textual prompts.
 
-#### Unsupervised Classification
+#### (Semi-/Un-)supervised Classification
+We use SAM in order to get flower images without background as this is usually pretty accurate using a pretrained SAM2 model. 
+For every possible wildflower, we select one candidate as reference image. 
+We finetune a masked-autoencoder, discard the decoder and use the encoder part of the model to retrieve image features. 
+
+To train the model, we chose to compare two different approaches, [BYOL](https://arxiv.org/abs/2006.07733) and [SimCLR](https://arxiv.org/abs/2002.05709), both methods for learning visual representations. 
+An encoder model maps each image into a vector. By normalizing the vector (unit vector) and comparing them using cosine-similarity, we get a probability of both images belonging to the same class or not. 
+
 TODO add description of the method
+
+##### Challenges
+
+* The number of distinct flower classes is comparably low compared to the number of overall images
+* Just by looking on the raw data, it is clear that the dataset is not evenly distributed (class imbalance) 
+* Many flowers of different classes look similar, e.g., all flowers with white blossoms. 
+* SAM is not perfect, i.e., it predicts false positives 
+
 
 
 #### Supervised Classification
@@ -110,20 +135,6 @@ TODO add description of the method
 Using the Eindhoven Wildflower Dataset (EWD) to finetune the CLIP model on a variety of flowers, the theory was that this might improve performance on the target dataset, as the CLIP model would have seen many more images of flowers than those available in the dataset. Even if the labels do not overlap fully, they should be close enough in embedding space to hopefully provide the model with a better starting point. The models were trained in two ways:
 1. **Cross-categorical entropy.** The CLIP model parameters were trained along with a classifier head for the EWD.
 2. **Supervised Contrastive Loss.** This is the method that the CLIP model was originally trained with. Images and labels for the EWD were fed into the model and the contrastive loss was then used to update the CLIP weights.
-
-
-| Max accuracy | Loss     | Retrained? | Optimizer | Learning rate | Batch size | Dropout | First epoch acc |
-| ------------ | -------- | ---------- | --------- | ------------- | ---------- | ------- | --------------- |
-| 89.3232      | CCE      | True       | SGD       | 0.02          | 32         | 0       | 88.44           |
-| 85.4976      | CCE      | False      | SGD       | 0.02          | 32         | 0       | 87.68           |
-| 90.2979      | CCE      | True       | SGD       | 0.001         | 32         | 0       | 85.32           |
-| 91.411       | CCE      | False      | SGD       | 0.001         | 32         | 0       | 66.51           |
-| 86.5553      | Contrast | True       | AdaDelta  | 0.04          | 32         | 0.2     | 72.17           |
-| 86.77        | Contrast | True       | AdaDelta  | 0.04          | 32         | 0       | 72.88           |
-| 88.67        | Contrast | True       | AdaDelta  | 0.4           | 32         | 0       | 86.78           |
-| 90.48        | Contrast | True       | AdaDelta  | 4.5           | 32         | 0       | 85.61           |
-| 89.76        | Contrast | True       | AdamW     | 0.008         | 32         | 0.1     | 87.04           |
-| 88.61        | Contrast | True       | AdamW     | 0.01          | 32         | 0       | 85.55           |
 
 
 ## Datasets
@@ -140,6 +151,21 @@ To develop a base model better suited for detection and classification on the ab
 
 ## Experiments & Results
 TODO
+
+
+| Max accuracy | Loss     | Retrained? | Optimizer | Learning rate | Batch size | Dropout | First epoch acc |
+| ------------ | -------- | ---------- | --------- | ------------- | ---------- | ------- | --------------- |
+| 89.3232      | CCE      | True       | SGD       | 0.02          | 32         | 0       | 88.44           |
+| 85.4976      | CCE      | False      | SGD       | 0.02          | 32         | 0       | 87.68           |
+| 90.2979      | CCE      | True       | SGD       | 0.001         | 32         | 0       | 85.32           |
+| 91.411       | CCE      | False      | SGD       | 0.001         | 32         | 0       | 66.51           |
+| 86.5553      | Contrast | True       | AdaDelta  | 0.04          | 32         | 0.2     | 72.17           |
+| 86.77        | Contrast | True       | AdaDelta  | 0.04          | 32         | 0       | 72.88           |
+| 88.67        | Contrast | True       | AdaDelta  | 0.4           | 32         | 0       | 86.78           |
+| 90.48        | Contrast | True       | AdaDelta  | 4.5           | 32         | 0       | 85.61           |
+| 89.76        | Contrast | True       | AdamW     | 0.008         | 32         | 0.1     | 87.04           |
+| 88.61        | Contrast | True       | AdamW     | 0.01          | 32         | 0       | 85.55           |
+
 
 ## Conclusions & Future Work
 TODO
