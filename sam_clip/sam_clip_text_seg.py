@@ -15,7 +15,7 @@ from sam_clip.models import build_sam_clip_text_ins_segmentor
 from sam_clip.utils import parse_config
 
 
-DATASET_PATH = "/sam_clip/output/train"
+DATASET_PATH = "output/train"
 
 def init_args():
     """
@@ -144,8 +144,8 @@ def post_process(results, masks_results, images_results, i, save_dir, save_inter
         dataset_dict.append({"file_name": file_name, "segmentations": filtered_seg_images, "bboxes": filtered_boxes,
                              'labels': filtered_labels})
         # Save images
-        original_image_path = os.path.join(DATASET_PATH, input_image_name)
-        image.save(original_image_path)
+        # original_image_path = os.path.join(DATASET_PATH, file_name)
+        # image.save(original_image_path)
         mask_add_save_path = ops.join(save_dir, '{:s}_insseg_add.png'.format(input_image_name))
         cv2.imwrite(mask_add_save_path, ret['ins_seg_add'])
     return dataset_dict
@@ -164,7 +164,7 @@ def main():
     print("Dataset loaded!")
 
     save_dir = args.save_dir
-    saving_interval = args.saving_interval
+    saving_interval = args.save_interval
     os.makedirs(save_dir, exist_ok=True)
     insseg_cfg_path = args.insseg_cfg_path
 
@@ -200,7 +200,7 @@ def main():
             results, masks_results, images_results = [], [], []
 
             # Save the dataset metadata to json file
-            with open("/sam_clip/output/train/metadata.jsonl", "a") as outfile:
+            with open(DATASET_PATH + "/metadata.jsonl", "a") as outfile:
                 for data in dataset_dict:
                     file, bbox, label = data['file_name'], data["bboxes"], data["labels"]
                     entry = {"file_name": file, "bboxes": bbox, 'labels': label}
