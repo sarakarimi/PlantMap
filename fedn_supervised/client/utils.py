@@ -77,6 +77,7 @@ def load_model_from_cfg(num_classes, cfg: DictConfig) -> L.LightningModule:
         else "categorical"
     )
     model_name = "openai/clip-vit-base-patch32"
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     if cfg.model.finetune_checkpoint:
         checkpoint_path = hf_hub_download(
             repo_id="SIAndersson/PlantMapCheckpoints",
@@ -85,8 +86,9 @@ def load_model_from_cfg(num_classes, cfg: DictConfig) -> L.LightningModule:
         # Pretrained model was contrastive
         if pretrained_str == "contrastive":
             clip_model = CLIPModel.from_pretrained(model_name).train()
+
             base_model = CLIPLightningWithContrastive.load_from_checkpoint(
-                checkpoint_path, clip_model=clip_model
+                checkpoint_path, clip_model=clip_model, map_location=device
             )
             model = CLIPContrastiveClassifier(
                 base_model,
@@ -97,7 +99,9 @@ def load_model_from_cfg(num_classes, cfg: DictConfig) -> L.LightningModule:
             )
         # Pretrained model was categorical
         else:
-            model = CLIPClassifier.load_from_checkpoint(checkpoint_path)
+            model = CLIPClassifier.load_from_checkpoint(
+                checkpoint_path, map_location=device
+            )
             model.classifier = nn.Linear(model.classifier.in_features, num_classes)
             model.accuracy = MulticlassAccuracy(num_classes=num_classes)
             model.lr = cfg.training.learning_rate
