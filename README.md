@@ -101,16 +101,42 @@ This approach allows us to build a high-performing foundation model for farm wee
 Since the solution entails performing **image segmentation and object detection/classification** tasks on images, the following sections detail the machine learning approaches employed for each specific task.
 
 ### Segmentation of images
-We use the  to perform segmentation on the images. 
-To perform image segmentation, we leverage the [Segment Anything Model (SAM)](https://github.com/facebookresearch/segment-anything), a versatile and state-of-the-art tool designed for robust segmentation across diverse image datasets.
+Given a collection of raw images, the first step is to perform segmentation to identify and extract potentially interesting regions that contain objects within the images. 
+To achieve this, we have explored two distinct approaches: one supervised and the other unsupervised, which we detail further below.
 
+1. **Unsupervised Segmentation** : Segments images into meaningful regions using U2seg (Unsupervised Universal Image Segmentation) model with no labeled data required for further training or fine-tuning of the model.
+
+2. **Supervised Segmentation** : Uses the Segment Anything Model (SAM) for the segmentation task. Training or fine-tuning of the SAM model requires labeled data
+
+#### Unsupervised Segmentation
+[U2Seg (Unsupervised Universal Image Segmentation)](https://github.com/u2seg/U2Seg) is a novel approach designed to segment images into meaningful regions without relying on annotated data for training. 
+It works by combining two key principles: learning pixel-level representations and clustering them into segments in a fully unsupervised manner. 
+The model leverages a vision transformer (ViT) to extract dense features across the image, capturing both local and global context. 
+It then applies contrastive learning to make similar pixels in feature space more alike while pushing dissimilar pixels apart, effectively learning the structure of an image. 
+Once features are learned, a clustering algorithm groups the pixels into distinct segments, representing objects or regions. 
+
+<p style="text-align: center;">
+  <img src="assests/main_pipeline_1.jpg" alt="Overview of U2seg" width="50%">
+</p>
+
+
+
+#### Supervised Segmentation
+The [Segment Anything Model (SAM)](https://github.com/facebookresearch/segment-anything) [3] is a foundation model for image segmentation, designed to handle a wide variety of segmentation tasks without the need for task-specific fine-tuning. 
+At its core, SAM uses a vision transformer (ViT) backbone to extract rich, hierarchical features from an image. 
+These features are then processed by a prompt encoder that allows users to provide inputs in the form of points, bounding boxes, or free-form text, specifying the region of interest to segment. 
+SAM combines these prompts with the image features to predict masks through a lightweight mask decoder.
+
+<p style="text-align: center;">
+  <img src="assests/sam.png" alt="Overview of SAM" width="50%">
+</p>
 
 ### Classification of objects in the images
 With the segmentations in place, we explore two approaches for the classification task:
 
-1. **Unsupervised Classification** : This method relies on feature matching to group segments of the original image that match with a given example without requiring labeled data.
+1. **Unsupervised Classification** : This method relies on template matching to group segments of the original image that match with a given example without requiring labeled data.
 
-2. **Supervised Classification** : This approach utilizes the pre-trained [CLIP](https://github.com/openai/CLIP) model, leveraging its powerful multi-modal capabilities to classify segments based on learned visual and the provided textual prompts.
+2. **Supervised Classification** : This approach utilizes the pre-trained CLIP (Contrastive Language–Image Pretraining) model, leveraging its powerful multi-modal capabilities to classify segments based on learned visual and the provided textual prompts.
 
 #### (Semi-/Un-)supervised Classification
 We use SAM in order to get flower images without background as this is usually pretty accurate using a pretrained SAM2 model. 
@@ -123,7 +149,6 @@ An encoder model maps each image into a vector. By normalizing the vector (unit 
 TODO add description of the method
 
 ##### Challenges
-
 * The number of distinct flower classes is comparably low compared to the number of overall images
 * Just by looking on the raw data, it is clear that the dataset is not evenly distributed (class imbalance) 
 * Many flowers of different classes look similar, e.g., all flowers with white blossoms. 
@@ -132,28 +157,36 @@ TODO add description of the method
 
 
 #### Supervised Classification
-TODO add description of the method
+[CLIP (Contrastive Language–Image Pretraining)](https://github.com/openai/CLIP) [4] is a multimodal model developed by OpenAI that learns to associate images and text through a contrastive learning framework.
+It uses two separate neural networks one for images (a vision transformer or CNN) and one for text (transformer-based language model). 
+These networks encode images and text into a shared embedding space. 
+During training, CLIP is presented with image-text pairs and learns to align their embeddings, so that the embedding of an image is close to its corresponding text description and far from unrelated ones.
+This enables CLIP to perform zero-shot tasks: it can recognize and classify images based on textual descriptions without requiring fine-tuning on specific datasets. 
 
-Using the Eindhoven Wildflower Dataset (EWD) to finetune the CLIP model on a variety of flowers, the theory was that this might improve performance on the target dataset, as the CLIP model would have seen many more images of flowers than those available in the dataset. Even if the labels do not overlap fully, they should be close enough in embedding space to hopefully provide the model with a better starting point. The models were trained in two ways:
+
+<p style="text-align: center;">
+<img src="assests/clip1.png" width="528"> 
+<img src="assests/clip2.png" width="570"> 
+</p>
+
+### Pre-training
+Using the [**Eindhoven Wildflower Dataset (EDW)**](https://dataverse.nl/dataset.xhtml?persistentId=doi:10.34894/U4VQJ6) to finetune the CLIP model on a variety of flowers, the theory was that this might improve performance on the target dataset, as the CLIP model would have seen many more images of flowers than those available in the dataset.
+Even if the labels do not overlap fully, they should be close enough in embedding space to hopefully provide the model with a better starting point. 
+The models were trained in two ways:
 1. **Cross-categorical entropy.** The CLIP model parameters were trained along with a classifier head for the EWD.
 2. **Supervised Contrastive Loss.** This is the method that the CLIP model was originally trained with. Images and labels for the EWD were fed into the model and the contrastive loss was then used to update the CLIP weights.
 
 
 ## Datasets
 Since we started with an unannotated dataset of raw images, it was necessary to first annotate and label the dataset to generate training data required for training an image object detection and classification model. To achieve this, we used the pre-trained SAM+CLIP approach described in the **Method** section.
-Specifically, the raw images were fed into the pre-trained **SAM** model, which performed segmentation to identify distinct regions in the images. 
+Specifically, the raw images were fed into the **SAM** model, which performed segmentation to identify distinct regions in the images. 
 These segmented regions were then passed to the **CLIP** model for classification. The CLIP model was provided with a list of textual prompts representing the labels of existing weed species, enabling it to classify each segment according to the specified labels. 
 The resulting labeled dataset has over 2000 samples with labels for four weed species **Daisy, Yarrow, Dandelion, and Red clover**. The dataset is published in the HuggingFace dataset repository [PlantMap](https://huggingface.co/datasets/sarakarimi30/PlantMap).
 
-To develop a base model better suited for detection and classification on the above-mentioned dataset, we pre-trained our model on a similar dataset, the [**Eindhoven Wildflower Dataset**](https://dataverse.nl/dataset.xhtml?persistentId=doi:10.34894/U4VQJ6). This dataset contains 2,002 high-resolution annotated images of wildflowers, providing a robust starting point for training.
-
-
-
+As detailed in the **Pre-training** section, to develop a base model better suited for detection and classification on the above-mentioned dataset, we pre-trained our model on a similar dataset, the EWD dataset. This dataset contains 2,002 high-resolution annotated images of wildflowers, providing a robust starting point for training.
 
 
 ## Experiments & Results
-TODO
-
 
 | Max accuracy | Loss     | Retrained? | Optimizer | Learning rate | Batch size | Dropout | First epoch acc |
 | ------------ | -------- | ---------- | --------- | ------------- | ---------- | ------- | --------------- |
@@ -175,3 +208,5 @@ TODO
 ## References
 [1] Schouten, Gerard, Bas SHT Michielsen, and Barbara Gravendeel. "Data-centric AI approach for automated wildflower monitoring." Plos one 19.9 (2024): e0302958. <br>
 [2] Sun, Tao, Dongsheng Li, and Bao Wang. "Decentralized federated averaging." IEEE Transactions on Pattern Analysis and Machine Intelligence 45.4 (2022): 4289-4301. <br>
+[3] Kirillov, Alexander, et al. "Segment anything." Proceedings of the IEEE/CVF International Conference on Computer Vision. 2023. <br>
+[4] Bianchi, Federico, et al. "Contrastive language-image pre-training for the italian language." arXiv preprint arXiv:2108.08688 (2021). <br>
