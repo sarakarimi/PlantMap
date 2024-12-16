@@ -183,14 +183,7 @@ An encoder model maps each image into a vector. By normalizing the vector (unit 
 * Many flowers of different classes look similar, e.g., all flowers with white blossoms. 
 * SAM is not perfect, i.e., it predicts false positives 
 
-<<<<<<< HEAD
-||||||| parent of 2d3a728 (Add MAE model for finetuning)
-#### Unsupervised Classification
-TODO add description of the method
-=======
 #### (Semi-/Un-)supervised Classification
-TODO add description of the method
->>>>>>> 2d3a728 (Add MAE model for finetuning)
 
 We use SAM in order to get flower images without background as this is usually pretty accurate using a pretrained SAM2 model. 
 
