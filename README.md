@@ -264,6 +264,7 @@ TODO
 **Markus Fritzsche:** Observing how methods like [SimCLR](https://arxiv.org/abs/2002.05709), [MoCo](https://arxiv.org/abs/1911.05722), and [BYOL](https://arxiv.org/abs/2006.07733) can be used to fine-tune pre-trained vision transformer encoders to retrieve class dependent image features with a high cosine similarity score if two images belong to the same flower class and a low score otherwise. 
 In addition, taking Sofia's work as a base to make it FEDn compatible, including distributing the dataset among all clients. 
 
+**Xavante Erickson:** Prepared and converted EWD to huggingface compatible format for Sofia Andersson's and Markus Fritzsche's work on fine-tuning. Explored unsupervised learning for panoptic segmentation using the PlantMap dataset. Assisted with FEDn development.
 
 ## References
 [1] Schouten, Gerard, Bas SHT Michielsen, and Barbara Gravendeel. "Data-centric AI approach for automated wildflower monitoring." Plos one 19.9 (2024): e0302958. <br>
