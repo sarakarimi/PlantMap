@@ -3,8 +3,8 @@ import lightning as L
 import argparse
 
 from torch.utils.data import DataLoader
-from data_auto import GeneratorDataset
-from model_pretrain import Model
+from data.data_auto import GeneratorDataset
+from models.model_pretrain import Model
 from lightning.pytorch.loggers import WandbLogger
 
 

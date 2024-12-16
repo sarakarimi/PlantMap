@@ -2,14 +2,29 @@ import lightning as L
 import torch
 
 from utils.similarity_loss import SimilarityLoss
-from model_pretrain import Model as PretrainedModel
+from models.model_pretrain import Model as PretrainedModel
+from transformers import CLIPVisionModel
+from transformers import Dinov2Model
 
 
 class Model(L.LightningModule):
-    def __init__(self, checkpoint: str) -> None:
+    def __init__(self, checkpoint: str | None, vit: str = "MAE") -> None:
         super().__init__()
-        self._encoder = PretrainedModel.load_from_checkpoint(checkpoint)._model.vit
-        # self._encoder = PretrainedModel()._model.vit
+        if vit == "MAE":
+            checkpoint = "facebook/vit-mae-base" if checkpoint is None else checkpoint
+            self._encoder = PretrainedModel.load_from_checkpoint(checkpoint)._model.vit
+        elif vit == "CLIP":
+            if checkpoint is not None:
+                print("WARNING: Ignoring checkpoint for CLIP model")
+            checkpoint = "openai/clip-vit-base-patch32" 
+            self._encoder = CLIPVisionModel.from_pretrained(checkpoint)
+        elif vit == "DINO":
+            if checkpoint is not None:
+                print("WARNING: Ignoring checkpoint for DINO model")
+            checkpoint = "facebook/dinov2-base"
+            self._encoder = Dinov2Model.from_pretrained(checkpoint)
+        else:
+            raise ValueError(f"Unknown model type: {vit}")
         self._similarity_loss = SimilarityLoss()
 
     def forward(self, pixel_values):
@@ -29,8 +44,7 @@ class Model(L.LightningModule):
 
     def configure_optimizers(self):
         optimizer = torch.optim.AdamW([
-            {"params": self._encoder.parameters(), "lr": 1e-5},
-            {"params": self._similarity_loss.parameters(), "lr": 1e-4},
+            {"params": self._encoder.parameters(), "lr": 1e-4},
         ])
         scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=10, gamma=0.1)
         return [optimizer], [scheduler]
