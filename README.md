@@ -261,6 +261,9 @@ TODO
 
 **Sofia Andersson:** Pre-trained the CLIP models on the EWD using both a contrastive and classification approach. Wrote the fine-tuning script for the models using PyTorch Lightning with a flexible Hydra config to be able to run many different variations of the models. Optimized hyperparameters for all pre-trained and fine-tuned models using Optuna Search with Ray Tune. Ran the one-machine fine-tuning tests using the base CLIP model and the pre-trained CLIP models.
 
+**Markus Fritzsche:** Observing how methods like [SimCLR](https://arxiv.org/abs/2002.05709), [MoCo](https://arxiv.org/abs/1911.05722), and [BYOL](https://arxiv.org/abs/2006.07733) can be used to fine-tune pre-trained vision transformer encoders to retrieve class dependent image features with a high cosine similarity score if two images belong to the same flower class and a low score otherwise. 
+In addition, taking Sofia's work as a base to make it FEDn compatible, including distributing the dataset among all clients. 
+
 
 ## References
 [1] Schouten, Gerard, Bas SHT Michielsen, and Barbara Gravendeel. "Data-centric AI approach for automated wildflower monitoring." Plos one 19.9 (2024): e0302958. <br>
