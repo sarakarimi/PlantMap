@@ -18,7 +18,17 @@ pip install scipy
 
 ```
 
+#### Setup the finetune environment using FEDn
+
+To get familiar with it, we were using [uv](https://github.com/astral-sh/uv) rather than more common virtual environments like conda. 
+Install it using ```curl -LsSf https://astral.sh/uv/install.sh | sh``` (on Linux and macOS). 
+No additional steps are needed to prepare the environment there. 
+In hindsight, we should set up the entire repository using uv.  
+
+
 #### Create Masks
+
+We experienced with that during the early project stage.
 
 ```
 # Place all images in data/Hyperlapse
