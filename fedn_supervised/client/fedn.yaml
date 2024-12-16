@@ -1,0 +1,7 @@
+entry_points:
+    build: 
+        command: uv run --cache-dir ../uv_cache build.py
+    train:
+        command: uv run --cache-dir ../uv_cache train.py
+    validate:
+        command: uv run --cache-dir ../uv_cache validate.py
