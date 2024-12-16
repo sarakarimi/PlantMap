@@ -48,7 +48,25 @@ conda activate <path or name>
 python unsupervised_classification/feature_matching.py
 ```
 
-------------------------------------------------------------------------------------------------------------------------------------------
+#### Running fine-tuning locally with different CLIP configs
+All the configurations for the model are contained within the `config` directory. There is a base configuration, with specific presets for the training and model parameters. In order to run the fine-tuning with the default parameters (base CLIP model with parameters from Ray Tune and using the PlantMap dataset), simply run:
+```
+python finetune_model.py
+```
+If you wish to run the model with the CLIP model set to the pre-trained classification model, then run:
+```
+python finetune_model.py model=classifier training=classifier
+```
+If you wish to do the same for the contrastive pre-trained model, then run:
+```
+python finetune_model.py model=contrastive training=contrastive
+```
+If you wish to change a specific parameter (for example the number of epochs to train for, the value of dropout, or the batch size) then you can run:
+```
+python finetune_model.py training.epochs=10 training.batch_size=128 model.dropout=0.2
+```
+This works the same whether you use the base CLIP model, or load in one of the other two models.
+
 ### Project members:
 
 Derya Akbaba - Linkoping University <br>
@@ -75,6 +93,7 @@ We build on prior work by Schouten et al. [1] who contribute an expert-annotated
 ## Scalable solution
 The main scalable solution in this project is built upon a federated learning architecture, enabling efficient training across distributed datasets while preserving data privacy. 
 To support this approach, we leverage the FedN tool, a framework designed for federated learning applications. Below, we provide a brief introduction to federated learning and the FedN tool.
+The actual fine-tuning model is also built upon the PyTorch Lightning infrastructure, which allows for the possibility of distributed learning, as well as scalability, without altering the model architecture.
 
 ### Federated Learning and FedN
 
@@ -164,17 +183,19 @@ During training, CLIP is presented with image-text pairs and learns to align the
 This enables CLIP to perform zero-shot tasks: it can recognize and classify images based on textual descriptions without requiring fine-tuning on specific datasets. 
 
 
-<p style="text-align: center;">
+<p style="text-align: center;">a
 <img src="assests/clip1.png" width="40%"> 
 <img src="assests/clip2.png" width="43%"> 
 </p>
 
 ### Pre-training
-Using the [**Eindhoven Wildflower Dataset (EDW)**](https://dataverse.nl/dataset.xhtml?persistentId=doi:10.34894/U4VQJ6) to finetune the CLIP model on a variety of flowers, the theory was that this might improve performance on the target dataset, as the CLIP model would have seen many more images of flowers than those available in the dataset.
-Even if the labels do not overlap fully, they should be close enough in embedding space to hopefully provide the model with a better starting point. 
+Using the [**Eindhoven Wildflower Dataset (EDW)**](https://dataverse.nl/dataset.xhtml?persistentId=doi:10.34894/U4VQJ6) to fine-tune the CLIP model on a variety of flowers, the theory is that this might improve performance on the target dataset, as the CLIP model would have seen many more images of flowers than those available in the dataset.
+Even if the labels do not overlap fully, they should in theory be close enough in embedding space to hopefully provide the model with a better starting point. 
 The models were trained in two ways:
 1. **Cross-categorical entropy.** The CLIP model parameters were trained along with a classifier head for the EWD.
 2. **Supervised Contrastive Loss.** This is the method that the CLIP model was originally trained with. Images and labels for the EWD were fed into the model and the contrastive loss was then used to update the CLIP weights.
+The best hyperparameters for each of the models were found using Optuna Search with Ray Tune. This search explored batch size, learning rate, and optimizers. The optimizers were AdaDelta, AdamW, and Stochastic Gradient Descent (SGD) with Nesterov momentum. All setups utilized a learning rate scheduler, with [SGD using a cosine annealing scheduler with warm restarts](https://arxiv.org/abs/1608.03983) [7] and the others lowering learning rate by a factor of 10 after 10 epochs of stagnation. 
+After this first step, the best model for each type of training was found, and their weights uploaded to HuggingFace. These were then used as a starting point to see how the model performed on the true dataset and whether the pre-training helped, or if the base CLIP model has the same performance. For this part of the project, the CLIP model weights were frozen and the classification head was the only part of the model being trained. The classification head had Kaiming-initialized weights and bias set to zero to start off with, which was particularly important for the model trained with CCE, as the original training head does not have the same amount of classes as the current head. For this case, the entire classification head was re-initialized, with the hope that most of the learning had been done by the CLIP model. The results of this training can be seen in the table further down. 
 
 
 ## Datasets
@@ -188,19 +209,20 @@ As detailed in the **Pre-training** section, to develop a base model better suit
 
 ## Experiments & Results
 
-| Max accuracy | Loss     | Retrained? | Optimizer | Learning rate | Batch size | Dropout | First epoch acc |
-| ------------ | -------- | ---------- | --------- | ------------- | ---------- | ------- | --------------- |
-| 89.3232      | CCE      | True       | SGD       | 0.02          | 32         | 0       | 88.44           |
-| 85.4976      | CCE      | False      | SGD       | 0.02          | 32         | 0       | 87.68           |
-| 90.2979      | CCE      | True       | SGD       | 0.001         | 32         | 0       | 85.32           |
-| 91.411       | CCE      | False      | SGD       | 0.001         | 32         | 0       | 66.51           |
-| 86.5553      | Contrast | True       | AdaDelta  | 0.04          | 32         | 0.2     | 72.17           |
-| 86.77        | Contrast | True       | AdaDelta  | 0.04          | 32         | 0       | 72.88           |
-| 88.67        | Contrast | True       | AdaDelta  | 0.4           | 32         | 0       | 86.78           |
-| 90.48        | Contrast | True       | AdaDelta  | 4.5           | 32         | 0       | 85.61           |
-| 89.76        | Contrast | True       | AdamW     | 0.008         | 32         | 0.1     | 87.04           |
-| 88.61        | Contrast | True       | AdamW     | 0.01          | 32         | 0       | 85.55           |
+| Max accuracy | Model       | Optimizer  | Learning rate | Batch size | Dropout | First epoch acc |
+| ------------ | --------    | ---------- | ------------- | ---------- | ------- | --------------- |
+| 89.3232      | Categorical | SGD        | 0.02          | 32         | 0       | 88.44           |
+| 85.4976      | Base CLIP   | SGD        | 0.02          | 32         | 0       | 87.68           |
+| 90.2979      | Categorical | SGD        | 0.001         | 32         | 0       | 85.32           |
+| 91.411       | Base CLIP   | SGD        | 0.001         | 32         | 0       | 66.51           |
+| 86.5553      | Contrast    | AdaDelta   | 0.04          | 32         | 0.2     | 72.17           |
+| 86.77        | Contrast    | AdaDelta   | 0.04          | 32         | 0       | 72.88           |
+| 88.67        | Contrast    | AdaDelta   | 0.4           | 32         | 0       | 86.78           |
+| 90.48        | Contrast    | AdaDelta   | 4.5           | 32         | 0       | 85.61           |
+| 89.76        | Contrast    | AdamW      | 0.008         | 32         | 0.1     | 87.04           |
+| 88.61        | Contrast    | AdamW      | 0.01          | 32         | 0       | 85.55           |
 
+These are the results of the fine-tuning on a single machine for a variety of hyperparameters. Originally, only the top two sets of parameters per model were going to be investigated (as found by Ray Tune), but there was evidence of overfitting for the contrastive model, which led to further investigation into both learning rates and dropout rates. Both max accuracy and the first epoch accuracy were calculated, as some models took a very long time to reach their max accuracy, and federated learning may prefer models that learn more quickly.
 
 ## Conclusions & Future Work
 TODO
@@ -215,3 +237,5 @@ TODO
 [4] Bianchi, Federico, et al. "Contrastive language-image pre-training for the italian language." arXiv preprint arXiv:2108.08688 (2021). <br>
 [5] Grill, Jean-Bastien, et al. "Bootstrap your own latent-a new approach to self-supervised learning." Advances in neural information processing systems 33 (2020): 21271-21284. <br>
 [6] Chen, Ting, et al. "A simple framework for contrastive learning of visual representations." International conference on machine learning. PMLR, 2020. <br>
+[7] Loshchilov, I. & Hutter, F. "SGDR: Stochastic Gradient Descent with Warm Restarts." arXiv preprint arXiv.1608.03983 (2017).
+
