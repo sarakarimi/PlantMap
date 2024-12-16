@@ -57,6 +57,8 @@ Sara karimi - KTH Royal Institute of Technology <br>
 Markus Fritzsche - Linkoping University <br>
 Xavante Erickson - Lund University and Ericsson<br>
 
+[Slides](https://docs.google.com/presentation/d/1hjCFfOYfRXobQbDJ9j70Z-hZU9LCGI1fGsSZFg5RXzU/edit?usp=sharing)
+
 ## Introduction
 Understanding and managing the biodiversity of farming fields is crucial for sustainable agriculture and efficient resource utilization.
 Having accurate information about the composition of wildflowers play an important role in managing the biodiversity achieving more sustainable and efficient farming practices.
@@ -201,6 +203,9 @@ As detailed in the **Pre-training** section, to develop a base model better suit
 
 
 ## Conclusions & Future Work
+TODO
+
+## Individual Contributions
 TODO
 
 ## References
