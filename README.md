@@ -214,9 +214,9 @@ As detailed in the **Pre-training** section, to develop a base model better suit
 | Max accuracy | Model       | Optimizer  | Learning rate | Batch size | Dropout | First epoch acc |
 | ------------ | --------    | ---------- | ------------- | ---------- | ------- | --------------- |
 | 89.3232      | Categorical | SGD        | 0.02          | 32         | 0       | 88.44           |
-| 85.4976      | Base CLIP   | SGD        | 0.02          | 32         | 0       | 87.68           |
+| 91.411       | Base CLIP   | SGD        | 0.02          | 32         | 0       | 87.68           |
 | 90.2979      | Categorical | SGD        | 0.001         | 32         | 0       | 85.32           |
-| 91.411       | Base CLIP   | SGD        | 0.001         | 32         | 0       | 66.51           |
+| 85.4972      | Base CLIP   | SGD        | 0.001         | 32         | 0       | 66.51           |
 | 86.5553      | Contrast    | AdaDelta   | 0.04          | 32         | 0.2     | 72.17           |
 | 86.77        | Contrast    | AdaDelta   | 0.04          | 32         | 0       | 72.88           |
 | 88.67        | Contrast    | AdaDelta   | 0.4           | 32         | 0       | 86.78           |
