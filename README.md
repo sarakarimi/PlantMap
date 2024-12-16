@@ -116,7 +116,7 @@ It then applies contrastive learning to make similar pixels in feature space mor
 Once features are learned, a clustering algorithm groups the pixels into distinct segments, representing objects or regions. 
 
 <p style="text-align: center;">
-  <img src="assests/main_pipeline_1.jpg" alt="Overview of U2seg" width="50%">
+  <img src="assests/main_pipeline_1.jpg" alt="Overview of U2seg" width="70%">
 </p>
 
 
@@ -128,7 +128,7 @@ These features are then processed by a prompt encoder that allows users to provi
 SAM combines these prompts with the image features to predict masks through a lightweight mask decoder.
 
 <p style="text-align: center;">
-  <img src="assests/sam.png" alt="Overview of SAM" width="50%">
+  <img src="assests/sam.png" alt="Overview of SAM" width="70%">
 </p>
 
 ### Classification of objects in the images
@@ -143,10 +143,8 @@ We use SAM in order to get flower images without background as this is usually p
 For every possible wildflower, we select one candidate as reference image. 
 We finetune a masked-autoencoder, discard the decoder and use the encoder part of the model to retrieve image features. 
 
-To train the model, we chose to compare two different approaches, [BYOL](https://arxiv.org/abs/2006.07733) and [SimCLR](https://arxiv.org/abs/2002.05709), both methods for learning visual representations. 
+To train the model, we chose to compare two different approaches, [BYOL](https://arxiv.org/abs/2006.07733) [5] and [SimCLR](https://arxiv.org/abs/2002.05709) [6], both methods for learning visual representations. 
 An encoder model maps each image into a vector. By normalizing the vector (unit vector) and comparing them using cosine-similarity, we get a probability of both images belonging to the same class or not. 
-
-TODO add description of the method
 
 ##### Challenges
 * The number of distinct flower classes is comparably low compared to the number of overall images
@@ -165,8 +163,8 @@ This enables CLIP to perform zero-shot tasks: it can recognize and classify imag
 
 
 <p style="text-align: center;">
-<img src="assests/clip1.png" width="528"> 
-<img src="assests/clip2.png" width="570"> 
+<img src="assests/clip1.png" width="40%"> 
+<img src="assests/clip2.png" width="43%"> 
 </p>
 
 ### Pre-training
@@ -210,3 +208,5 @@ TODO
 [2] Sun, Tao, Dongsheng Li, and Bao Wang. "Decentralized federated averaging." IEEE Transactions on Pattern Analysis and Machine Intelligence 45.4 (2022): 4289-4301. <br>
 [3] Kirillov, Alexander, et al. "Segment anything." Proceedings of the IEEE/CVF International Conference on Computer Vision. 2023. <br>
 [4] Bianchi, Federico, et al. "Contrastive language-image pre-training for the italian language." arXiv preprint arXiv:2108.08688 (2021). <br>
+[5] Grill, Jean-Bastien, et al. "Bootstrap your own latent-a new approach to self-supervised learning." Advances in neural information processing systems 33 (2020): 21271-21284. <br>
+[6] Chen, Ting, et al. "A simple framework for contrastive learning of visual representations." International conference on machine learning. PMLR, 2020. <br>
