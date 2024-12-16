@@ -183,7 +183,7 @@ During training, CLIP is presented with image-text pairs and learns to align the
 This enables CLIP to perform zero-shot tasks: it can recognize and classify images based on textual descriptions without requiring fine-tuning on specific datasets. 
 
 
-<p style="text-align: center;">a
+<p style="text-align: center;">
 <img src="assests/clip1.png" width="40%"> 
 <img src="assests/clip2.png" width="43%"> 
 </p>
@@ -194,6 +194,7 @@ Even if the labels do not overlap fully, they should in theory be close enough i
 The models were trained in two ways:
 1. **Cross-categorical entropy.** The CLIP model parameters were trained along with a classifier head for the EWD.
 2. **Supervised Contrastive Loss.** This is the method that the CLIP model was originally trained with. Images and labels for the EWD were fed into the model and the contrastive loss was then used to update the CLIP weights.
+
 The best hyperparameters for each of the models were found using Optuna Search with Ray Tune. This search explored batch size, learning rate, and optimizers. The optimizers were AdaDelta, AdamW, and Stochastic Gradient Descent (SGD) with Nesterov momentum. All setups utilized a learning rate scheduler, with [SGD using a cosine annealing scheduler with warm restarts](https://arxiv.org/abs/1608.03983) [7] and the others lowering learning rate by a factor of 10 after 10 epochs of stagnation. 
 After this first step, the best model for each type of training was found, and their weights uploaded to HuggingFace. These were then used as a starting point to see how the model performed on the true dataset and whether the pre-training helped, or if the base CLIP model has the same performance. For this part of the project, the CLIP model weights were frozen and the classification head was the only part of the model being trained. The classification head had Kaiming-initialized weights and bias set to zero to start off with, which was particularly important for the model trained with CCE, as the original training head does not have the same amount of classes as the current head. For this case, the entire classification head was re-initialized, with the hope that most of the learning had been done by the CLIP model. The results of this training can be seen in the table further down. 
 
@@ -230,6 +231,9 @@ TODO
 ## Individual Contributions
 TODO
 
+**Sofia Andersson:** Pre-trained the CLIP models on the EWD using both a contrastive and classification approach. Wrote the fine-tuning script for the models using PyTorch Lightning with a flexible Hydra config to be able to run many different variations of the models. Optimized hyperparameters for all pre-trained and fine-tuned models using Optuna Search with Ray Tune. Ran the one-machine fine-tuning tests using the base CLIP model and the pre-trained CLIP models.
+
+
 ## References
 [1] Schouten, Gerard, Bas SHT Michielsen, and Barbara Gravendeel. "Data-centric AI approach for automated wildflower monitoring." Plos one 19.9 (2024): e0302958. <br>
 [2] Sun, Tao, Dongsheng Li, and Bao Wang. "Decentralized federated averaging." IEEE Transactions on Pattern Analysis and Machine Intelligence 45.4 (2022): 4289-4301. <br>
@@ -237,5 +241,5 @@ TODO
 [4] Bianchi, Federico, et al. "Contrastive language-image pre-training for the italian language." arXiv preprint arXiv:2108.08688 (2021). <br>
 [5] Grill, Jean-Bastien, et al. "Bootstrap your own latent-a new approach to self-supervised learning." Advances in neural information processing systems 33 (2020): 21271-21284. <br>
 [6] Chen, Ting, et al. "A simple framework for contrastive learning of visual representations." International conference on machine learning. PMLR, 2020. <br>
-[7] Loshchilov, I. & Hutter, F. "SGDR: Stochastic Gradient Descent with Warm Restarts." arXiv preprint arXiv.1608.03983 (2017).
+[7] Loshchilov, I. & Hutter, F. "SGDR: Stochastic Gradient Descent with Warm Restarts." arXiv preprint arXiv.1608.03983 (2017). <br>
 
