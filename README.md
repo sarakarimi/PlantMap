@@ -1,7 +1,6 @@
 # PlantMap: Federated learning for segmentation, detection, and classification of weed species in aerial images taken from farm fields
 
 
-
 ## Setup Environment
 
 ```
@@ -26,37 +25,11 @@ No additional steps are needed to prepare the environment there.
 In hindsight, we should set up the entire repository using uv.  
 
 
-#### Create Masks
 
-We experienced with that during the early project stage.
+### Unsupervised Similarity Matching
 
-```
-# Place all images in data/Hyperlapse
-mkdir masks
-mkdir test_results
-python scripts/huggingface_sam_test.py 
+Check out the README in ```unsupervised_classification```.
 
-```
-
-#### Create Flower Dataset for Unsupervised Classification
-
-```
-mkdir masks
-conda activate <path or name>
-python unsupervised_classification/create_all_flowers.py
-```
-
-
-#### Similarity Matching
-Due to laziness, the current code does only compare all flowers of a single picture. 
-
-```
-# Run the "Create Flower Dataset for Unsupervised Classification" step
-mkdir similarities
-
-conda activate <path or name>
-python unsupervised_classification/feature_matching.py
-```
 
 #### Running fine-tuning locally with different CLIP configs
 All the configurations for the model are contained within the `config` directory. There is a base configuration, with specific presets for the training and model parameters. In order to run the fine-tuning with the default parameters (base CLIP model with parameters from Ray Tune and using the PlantMap dataset), simply run:
@@ -75,14 +48,14 @@ If you wish to change a specific parameter (for example the number of epochs to 
 ```
 python finetune_model.py training.epochs=10 training.batch_size=128 model.dropout=0.2
 ```
-This works the same whether you use the base CLIP model, or load in one of the other two models.
+This works the same whether you use the base CLIP model, or load in one of the other two models.1
 
 ### Project members:
 
-Derya Akbaba - Linkoping University <br>
+Derya Akbaba - Linköping University <br>
 Sofia Andersson - Lund University <br>
 Sara karimi - KTH Royal Institute of Technology <br>
-Markus Fritzsche - Linkoping University <br>
+Markus Fritzsche - Linköping University <br>
 Xavante Erickson - Lund University and Ericsson<br>
 
 [Slides](https://docs.google.com/presentation/d/1hjCFfOYfRXobQbDJ9j70Z-hZU9LCGI1fGsSZFg5RXzU/edit?usp=sharing)
