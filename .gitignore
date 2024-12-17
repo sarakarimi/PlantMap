@@ -3,8 +3,10 @@ PlantImages/
 test_outputs/
 .idea
 pretrained
-outputs/
-logs/
+pretrain_clip/outputs/
+pretrain_clip/logs/
+pretrain_clip/.venv/
+pretrain_clip/uv.lock
 # Partial files
 ._*
 

@@ -59,21 +59,23 @@ python unsupervised_classification/feature_matching.py
 ```
 
 #### Running fine-tuning locally with different CLIP configs
+First enter the `pretrain_clip` directory and ensure that you have `uv` installed. **NOTE:** This will only work on a Linux machine with at least one GPU. MacOS is not supported and Windows is untested.
+
 All the configurations for the model are contained within the `config` directory. There is a base configuration, with specific presets for the training and model parameters. In order to run the fine-tuning with the default parameters (base CLIP model with parameters from Ray Tune and using the PlantMap dataset), simply run:
 ```
-python finetune_model.py
+uv run finetune_model.py
 ```
 If you wish to run the model with the CLIP model set to the pre-trained classification model, then run:
 ```
-python finetune_model.py model=classifier training=classifier
+uv run finetune_model.py model=classifier training=classifier
 ```
 If you wish to do the same for the contrastive pre-trained model, then run:
 ```
-python finetune_model.py model=contrastive training=contrastive
+uv run finetune_model.py model=contrastive training=contrastive
 ```
 If you wish to change a specific parameter (for example the number of epochs to train for, the value of dropout, or the batch size) then you can run:
 ```
-python finetune_model.py training.epochs=10 training.batch_size=128 model.dropout=0.2
+uv run finetune_model.py training.epochs=10 training.batch_size=128 model.dropout=0.2
 ```
 This works the same whether you use the base CLIP model, or load in one of the other two models.
 

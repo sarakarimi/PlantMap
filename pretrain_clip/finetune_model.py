@@ -697,7 +697,7 @@ def main(cfg: DictConfig) -> None:
     trainer = Trainer(
         logger=[logger],
         max_epochs=cfg.training.epochs,
-        accelerator="gpu",
+        accelerator="auto",
         devices=cfg.training.num_gpus
         if cfg.training.num_gpus > 1
         else [int(cfg.training.device[-1])],
