@@ -259,7 +259,6 @@ These are the results of the fine-tuning on a single machine for a variety of hy
 TODO
 
 ## Individual Contributions
-TODO
 
 **Sara Karimi:** Worked on dataset creation (uploaded to HuggingFace) including segmentation and labeling of the flower species in images using a combined SAM+CLIP approach. Conducted an early evaluation of LabelStudio with an integrated SAM model but opted against it to ensure more robust and direct access to SAM functionalities.
 
@@ -269,6 +268,8 @@ TODO
 In addition, taking Sofia's work as a base to make it FEDn compatible, including distributing the dataset among all clients. 
 
 **Xavante Erickson:** Prepared and converted EWD to huggingface compatible format for Sofia Andersson's and Markus Fritzsche's work on fine-tuning. Explored unsupervised learning for panoptic segmentation using the PlantMap dataset. Assisted with FEDn development.
+
+**Derya Akbaba:** Created initial dataset (uploaded to HuggingFace) including raw images used later by Sara. Created initial Docker file. Applied for and set up Berzelius project. Designed and created the project presentation.
 
 ## References
 [1] Schouten, Gerard, Bas SHT Michielsen, and Barbara Gravendeel. "Data-centric AI approach for automated wildflower monitoring." Plos one 19.9 (2024): e0302958. <br>
