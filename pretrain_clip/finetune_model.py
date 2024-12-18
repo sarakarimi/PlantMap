@@ -728,7 +728,7 @@ def main(cfg: DictConfig) -> None:
         else:
             gpu_devices = [int(cfg.training.device[-1])]
     else:
-        gpu_devices = cfg.training.num_gpus
+        gpu_devices = "auto"
 
     trainer = Trainer(
         logger=[logger],
