@@ -602,7 +602,7 @@ def main(cfg: DictConfig) -> None:
         if "val_loss" in cfg.model.pretrained_checkpoint
         else "categorical"
     )
-    model_str = f"{pretrained_str if cfg.model.finetune_checkpoint else "base"}CLIP_dropout_{cfg.model.dropout}_optim_{cfg.training.optimizer}_batch_{cfg.training.batch_size}_lr_{cfg.training.learning_rate}_{"pretraining" if not cfg.model.freeze_CLIP else "finetuning"}"
+    model_str = f"{cfg.model.model_type}CLIP_dropout_{cfg.model.dropout}_optim_{cfg.training.optimizer}_batch_{cfg.training.batch_size}_lr_{cfg.training.learning_rate}_{"pretraining" if not cfg.model.freeze_CLIP else "finetuning"}"
 
     logger = CSVLogger("logs", name=model_str)
 
