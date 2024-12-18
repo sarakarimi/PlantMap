@@ -602,7 +602,7 @@ def main(cfg: DictConfig) -> None:
         if "val_loss" in cfg.model.pretrained_checkpoint
         else "categorical"
     )
-    model_str = f"{pretrained_str if cfg.model.finetune_checkpoint else "base"}CLIP_dropout_{cfg.model.dropout}_optim_{cfg.training.optimizer}_batch_{cfg.training.batch_size}_lr_{cfg.training.learning_rate}"
+    model_str = f"{pretrained_str if cfg.model.finetune_checkpoint else "base"}CLIP_dropout_{cfg.model.dropout}_optim_{cfg.training.optimizer}_batch_{cfg.training.batch_size}_lr_{cfg.training.learning_rate}_{"pretraining" if not cfg.model.freeze_CLIP else "finetuning"}"
 
     logger = CSVLogger("logs", name=model_str)
 
@@ -613,8 +613,6 @@ def main(cfg: DictConfig) -> None:
     clip_processor = CLIPProcessor.from_pretrained(model_name)
 
     dataset_name = cfg.model.dataset_name
-    # ds = load_dataset("xavantex/EindhovenWildflower")
-    # ds = load_dataset("sarakarimi30/PlantMap")
     ds = load_dataset(dataset_name)
     dataset = ds["train"]
     cropped_images, labels, categories = preprocess_dataset(dataset)
