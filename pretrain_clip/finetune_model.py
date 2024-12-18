@@ -721,13 +721,20 @@ def main(cfg: DictConfig) -> None:
         for param in model.clip_model.parameters():
             param.requires_grad = False
 
+    # Check for devices and ensure non-GPU cases are addressed properly
+    if torch.cuda.is_available():
+        if cfg.training.num_gpus > 1:
+            gpu_devices = cfg.training.num_gpus
+        else:
+            gpu_devices = [int(cfg.training.device[-1])]
+    else:
+        gpu_devices = cfg.training.num_gpus
+
     trainer = Trainer(
         logger=[logger],
         max_epochs=cfg.training.epochs,
         accelerator="auto",
-        devices=cfg.training.num_gpus
-        if cfg.training.num_gpus > 1
-        else [int(cfg.training.device[-1])],
+        devices=gpu_devices,
         log_every_n_steps=10,
         callbacks=[checkpoint_callback, early_stop_callback, lr_monitor],
     )
