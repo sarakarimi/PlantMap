@@ -2,3 +2,5 @@ dataset_name: "sarakarimi30/PlantMap"
 finetune_checkpoint: False
 dropout: 0.0
 pretrained_checkpoint: " "
+model_type: "BaseModel"
+freeze_CLIP: True

@@ -593,6 +593,8 @@ def main(cfg: DictConfig) -> None:
         "dropout": cfg.model.dropout,
         "finetune_checkpoint": cfg.model.finetune_checkpoint,
         "pretrained checkpoint": cfg.model.pretrained_checkpoint,
+        "model_type": cfg.model.model_type,
+        "freeze_clip": cfg.model.freeze_CLIP,
     }
 
     pretrained_str = (
@@ -683,16 +685,43 @@ def main(cfg: DictConfig) -> None:
             nn.init.zeros_(model.classifier.bias)
     # Using base CLIP model
     else:
-        model = CLIPClassifier(
-            model_name,
-            num_classes,
-            optimizer_type=cfg.training.optimizer,
-            lr=cfg.training.learning_rate,
-        )
+        if cfg.model.model_type == "BaseModel" or cfg.model.model_type == "Classifier":
+            model = CLIPClassifier(
+                model_name,
+                num_classes,
+                optimizer_type=cfg.training.optimizer,
+                lr=cfg.training.learning_rate,
+            )
+        elif cfg.model.model_type == "Contrastive":
+            clip_model = CLIPModel.from_pretrained(model_name).train()
+            model = CLIPLightningWithContrastive(
+                clip_model,
+                lr=cfg.training.learning_rate,
+                optimizer_type=cfg.training.optimizer,
+            )
 
-    # Freeze the feature extractor
-    for param in model.clip_model.parameters():
-        param.requires_grad = False
+            checkpoint_callback = ModelCheckpoint(
+                dirpath="model_checkpoints",
+                filename=model_str + "_best_model-{epoch:02d}-{val_loss:.2f}",
+                monitor="val_loss",
+                mode="min",
+            )
+
+            early_stop_callback = EarlyStopping(
+                monitor="val_loss",
+                min_delta=0.001,
+                patience=15,
+                verbose=False,
+                mode="min",
+            )
+        else:
+            raise ValueError(f"Unknown model type: {cfg.model.model_type}")
+
+    # If fine-tuning, freeze the CLIP model
+    if cfg.model.freeze_CLIP:
+        # Freeze the feature extractor
+        for param in model.clip_model.parameters():
+            param.requires_grad = False
 
     trainer = Trainer(
         logger=[logger],
@@ -712,7 +741,9 @@ def main(cfg: DictConfig) -> None:
     best_val_accuracy = checkpoint_callback.best_model_score
 
     print(f"Best model path: {best_path}")
-    print(f"Best validation accuracy: {best_val_accuracy:.4f}")
+    print(
+        f"Best validation {"loss" if cfg.model.model_type == "Contrastive" and not cfg.model.finetune_checkpoint else "accuracy"}: {best_val_accuracy:.4f}"
+    )
 
 
 if __name__ == "__main__":

@@ -2,3 +2,5 @@ dataset_name: "sarakarimi30/PlantMap"
 finetune_checkpoint: True
 dropout: 0.1
 pretrained_checkpoint: "CLIP_contrastive_DisSalamander_AdaDelta_best_model-epoch=14-val_loss=0.38.ckpt"
+model_type: "Contrastive"
+freeze_CLIP: True
