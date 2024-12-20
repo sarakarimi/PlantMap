@@ -1,6 +1,0 @@
-epochs: 100
-device: "cuda:0"
-num_gpus: 1
-batch_size: 32
-learning_rate: 0.0000439668
-optimizer: "AdaDelta"

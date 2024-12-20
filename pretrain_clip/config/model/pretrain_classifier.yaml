@@ -1,6 +1,0 @@
-dataset_name: "xavantex/EindhovenWildflower"
-finetune_checkpoint: False
-dropout: 0.0
-pretrained_checkpoint: " "
-model_type: "Classifier"
-freeze_CLIP: False

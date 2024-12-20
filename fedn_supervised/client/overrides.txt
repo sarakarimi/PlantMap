@@ -1,4 +1,0 @@
-training.epochs=1
-model=classifier
-training.num_gpus=1
-training=classifier
