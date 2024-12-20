@@ -34,10 +34,10 @@ In hindsight, we should set up the entire repository using uv.
 │       ├── data
 │       ├── models
 │       └── utils
-├── pretrain_clip
-│   └── config
-│       ├── model
-│       └── training
+├── pretrain_clip           # The code for pre-training CLIP on EWD and fine-tuning on drone dataset
+│   └── config              # Directory for Hydra configs for different types of model: basic, classifier, and contrastive
+│       ├── model           # Directory for configs related to the model
+│       └── training        # Directory for configs related to the training
 ├── sam_clip                # Code for automatic annotation and labeling of raw images using SAM+CLIP
 │   ├── config              # Model hyperparameters & configs
 │   ├── data                # Prompt tokens
