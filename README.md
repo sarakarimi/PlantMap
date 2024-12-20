@@ -141,7 +141,7 @@ In this project, we leverage [**FedN**](https://www.scaleoutsystems.com/framewor
 This approach allows us to build a high-performing foundation model for farm weed detection without compromising individual data security.
 
 <p style="text-align: center;">
-<img src="assests/federated.png" width="40%"> 
+<img src="assests/federated.png" width="60%"> 
 </p>
 
 
@@ -249,7 +249,7 @@ These segmented regions were then passed to the **CLIP** model for classificatio
 The resulting labeled dataset has over 2000 samples with labels for four weed species **Daisy, Yarrow, Dandelion, and Red clover**. The dataset is published in the HuggingFace dataset repository [PlantMap](https://huggingface.co/datasets/sarakarimi30/PlantMap).
 
 <p style="text-align: center;">
-<img src="assests/dataset_Annotation.png" width="50%"> 
+<img src="assests/dataset_Annotation.png" width="60%"> 
 </p>
 
 As detailed in the **Pre-training** section, to develop a base model better suited for detection and classification on the above-mentioned dataset, we pre-trained our model on a similar dataset, the EWD dataset. This dataset contains 2,002 high-resolution annotated images of wildflowers, providing a robust starting point for training.
