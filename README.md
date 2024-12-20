@@ -23,6 +23,36 @@ Install it using `curl -LsSf https://astral.sh/uv/install.sh | sh` (on Linux and
 No additional steps are needed to prepare the environment there.
 In hindsight, we should set up the entire repository using uv.
 
+### Project Structure
+```
+├── assests
+├── fedn_supervised
+│   └── client
+│       └── config
+├── finetune_mae
+│   └── src
+│       ├── data
+│       ├── models
+│       └── utils
+├── pretrain_clip
+│   └── config
+│       ├── model
+│       └── training
+├── sam_clip                # Code for automatic annotation and labeling of raw images using SAM+CLIP
+│   ├── config              # Model hyperparameters & configs
+│   ├── data                # Prompt tokens
+│   │   └── resources       
+│   ├── models              # SAM and clip model integratetion
+│   │   ├── clip
+│   │   ├── detector
+│   │   └── sam
+│   ├── pretrained          # Pre-trained models' checkpoints
+│   │   ├── clip
+│   │   └── sam
+│   └── utils
+└── unsupervised_classification
+```
+
 #### Create Masks
 
 We experienced with that during the early project stage.
