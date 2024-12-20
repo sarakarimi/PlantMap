@@ -1,4 +1,12 @@
-# PlantMap: Federated learning for segmentation, detection, and classification of weed species in aerial images taken from farm fields
+<link rel="stylesheet" href="extra.css" />
+
+# PlantMap
+
+**Federated learning for segmentation, detection, and classification of weed species in aerial images taken from farm fields**
+
+## Github Repo
+
+[https://github.com/sarakarimi/PlantMap/blob/main/README.md](https://github.com/sarakarimi/PlantMap/blob/main/README.md)
 
 ## Setup Environment
 
@@ -22,36 +30,6 @@ To get familiar with it, we were using [uv](https://github.com/astral-sh/uv) rat
 Install it using `curl -LsSf https://astral.sh/uv/install.sh | sh` (on Linux and macOS).
 No additional steps are needed to prepare the environment there.
 In hindsight, we should set up the entire repository using uv.
-
-### Project Structure
-```
-├── assests
-├── fedn_supervised
-│   └── client
-│       └── config
-├── finetune_mae
-│   └── src
-│       ├── data
-│       ├── models
-│       └── utils
-├── pretrain_clip
-│   └── config
-│       ├── model
-│       └── training
-├── sam_clip                # Code for automatic annotation and labeling of raw images using SAM+CLIP
-│   ├── config              # Model hyperparameters & configs
-│   ├── data                # Prompt tokens
-│   │   └── resources       
-│   ├── models              # SAM and clip model integratetion
-│   │   ├── clip
-│   │   ├── detector
-│   │   └── sam
-│   ├── pretrained          # Pre-trained models' checkpoints
-│   │   ├── clip
-│   │   └── sam
-│   └── utils
-└── unsupervised_classification
-```
 
 #### Create Masks
 
@@ -170,11 +148,6 @@ A critical aspect of FL is the aggregation of model updates to ensure the global
 In this project, we leverage [**FedN**](https://www.scaleoutsystems.com/framework), a robust federated learning framework designed for scalable and efficient model training. Using FedN, we aggregate locally trained models from farmers to create a unified global model for weed detection and classification. Each farmer's model is trained on their specific annotated data (e.g., clovers or chamomiles), and the aggregated model benefits from the diverse local datasets while respecting data privacy.
 This approach allows us to build a high-performing foundation model for farm weed detection without compromising individual data security.
 
-<p style="text-align: center;">
-<img src="assests/federated.png" width="60%"> 
-</p>
-
-
 ## Machine Learning Methods
 
 Since the solution entails performing **image segmentation and object detection/classification** tasks on images, the following sections detail the machine learning approaches employed for each specific task.
@@ -184,10 +157,21 @@ Since the solution entails performing **image segmentation and object detection/
 Given a collection of raw images, the first step is to perform segmentation to identify and extract potentially interesting regions that contain objects within the images.
 To achieve this, we have explored two distinct approaches: one supervised and the other unsupervised, which we detail further below.
 
-1. **Unsupervised Segmentation** : Segments images into meaningful regions using semantic and instance mask generation with no labeled data required for further training or fine-tuning of the model (like [U2Seg (Unsupervised Universal Image Segmentation)](https://github.com/u2seg/U2Seg)).
+1. **Unsupervised Segmentation** : Segments images into meaningful regions using U2seg (Unsupervised Universal Image Segmentation) model with no labeled data required for further training or fine-tuning of the model.
 
 2. **Supervised Segmentation** : Uses the Segment Anything Model (SAM) for the segmentation task. Training or fine-tuning of the SAM model requires labeled data
 
+#### Unsupervised Segmentation
+
+[U2Seg (Unsupervised Universal Image Segmentation)](https://github.com/u2seg/U2Seg) is a novel approach designed to segment images into meaningful regions without relying on annotated data for training.
+It works by combining two key principles: learning pixel-level representations and clustering them into segments in a fully unsupervised manner.
+The model leverages a vision transformer (ViT) to extract dense features across the image, capturing both local and global context.
+It then applies contrastive learning to make similar pixels in feature space more alike while pushing dissimilar pixels apart, effectively learning the structure of an image.
+Once features are learned, a clustering algorithm groups the pixels into distinct segments, representing objects or regions.
+
+<p style="text-align: center;">
+  <img src="img/main_pipeline_1.jpg" alt="Overview of U2seg" width="70%">
+</p>
 
 #### Supervised Segmentation
 
@@ -197,7 +181,7 @@ These features are then processed by a prompt encoder that allows users to provi
 SAM combines these prompts with the image features to predict masks through a lightweight mask decoder.
 
 <p style="text-align: center;">
-  <img src="assests/sam.png" alt="Overview of SAM" width="70%">
+  <img src="img/sam.png" alt="Overview of SAM" width="70%">
 </p>
 
 ### Classification of objects in the images
@@ -234,10 +218,6 @@ We finetune a masked-autoencoder, discard the decoder and use the encoder part o
 To train the model, we chose to compare two different approaches, [BYOL](https://arxiv.org/abs/2006.07733) and [SimCLR](https://arxiv.org/abs/2002.05709), both methods for learning visual representations.
 An encoder model maps each image into a vector. By normalizing the vector (unit vector) and comparing them using cosine-similarity, we get a probability of both images belonging to the same class or not.
 
-<p style="text-align: center;">
-<img src="assests/unsupervised_classification.png" width="70%"> 
-</p>
-
 ##### Challenges
 
 - The number of distinct flower classes is comparably low compared to the number of overall images
@@ -254,8 +234,8 @@ During training, CLIP is presented with image-text pairs and learns to align the
 This enables CLIP to perform zero-shot tasks: it can recognize and classify images based on textual descriptions without requiring fine-tuning on specific datasets.
 
 <p style="text-align: center;">
-<img src="assests/clip1.png" width="30%"> 
-<img src="assests/clip2.png" width="32.5%"> 
+<img src="img/clip1.png" width="40%"> 
+<img src="img/clip2.png" width="43%"> 
 </p>
 
 ### Pre-training
@@ -278,64 +258,28 @@ Specifically, the raw images were fed into the **SAM** model, which performed se
 These segmented regions were then passed to the **CLIP** model for classification. The CLIP model was provided with a list of textual prompts representing the labels of existing weed species, enabling it to classify each segment according to the specified labels.
 The resulting labeled dataset has over 2000 samples with labels for four weed species **Daisy, Yarrow, Dandelion, and Red clover**. The dataset is published in the HuggingFace dataset repository [PlantMap](https://huggingface.co/datasets/sarakarimi30/PlantMap).
 
-<p style="text-align: center;">
-<img src="assests/dataset_Annotation.png" width="60%"> 
-</p>
-
 As detailed in the **Pre-training** section, to develop a base model better suited for detection and classification on the above-mentioned dataset, we pre-trained our model on a similar dataset, the EWD dataset. This dataset contains 2,002 high-resolution annotated images of wildflowers, providing a robust starting point for training.
 
 ## Experiments & Results
 
-### Results of single machine training
-| Max accuracy | Model       | Optimizer  | Learning rate | Batch size | Dropout | First epoch acc |
-| ------------ | --------    | ---------- | ------------- | ---------- | ------- | --------------- |
-| 89.3232      | Categorical | SGD        | 0.02          | 32         | 0       | 88.44           |
-| 91.411       | Base CLIP   | SGD        | 0.02          | 32         | 0       | 87.68           |
-| 90.2979      | Categorical | SGD        | 0.001         | 32         | 0       | 85.32           |
-| 85.4972      | Base CLIP   | SGD        | 0.001         | 32         | 0       | 66.51           |
-| 86.5553      | Contrast    | AdaDelta   | 0.04          | 32         | 0.2     | 72.17           |
-| 86.77        | Contrast    | AdaDelta   | 0.04          | 32         | 0       | 72.88           |
-| 88.67        | Contrast    | AdaDelta   | 0.4           | 32         | 0       | 86.78           |
-| 90.48        | Contrast    | AdaDelta   | 4.5           | 32         | 0       | 85.61           |
-| 89.76        | Contrast    | AdamW      | 0.008         | 32         | 0.1     | 87.04           |
-| 88.61        | Contrast    | AdamW      | 0.01          | 32         | 0       | 85.55           |
+| Max accuracy | Model       | Optimizer | Learning rate | Batch size | Dropout | First epoch acc |
+| ------------ | ----------- | --------- | ------------- | ---------- | ------- | --------------- |
+| 89.3232      | Categorical | SGD       | 0.02          | 32         | 0       | 88.44           |
+| 91.411       | Base CLIP   | SGD       | 0.02          | 32         | 0       | 87.68           |
+| 90.2979      | Categorical | SGD       | 0.001         | 32         | 0       | 85.32           |
+| 85.4972      | Base CLIP   | SGD       | 0.001         | 32         | 0       | 66.51           |
+| 86.5553      | Contrast    | AdaDelta  | 0.04          | 32         | 0.2     | 72.17           |
+| 86.77        | Contrast    | AdaDelta  | 0.04          | 32         | 0       | 72.88           |
+| 88.67        | Contrast    | AdaDelta  | 0.4           | 32         | 0       | 86.78           |
+| 90.48        | Contrast    | AdaDelta  | 4.5           | 32         | 0       | 85.61           |
+| 89.76        | Contrast    | AdamW     | 0.008         | 32         | 0.1     | 87.04           |
+| 88.61        | Contrast    | AdamW     | 0.01          | 32         | 0       | 85.55           |
 
 These are the results of the fine-tuning on a single machine for a variety of hyperparameters. Originally, only the top two sets of parameters per model were going to be investigated (as found by Ray Tune), but there was evidence of overfitting for the contrastive model, which led to further investigation into both learning rates and dropout rates. Both max accuracy and the first epoch accuracy were calculated, as some models took a very long time to reach their max accuracy, and federated learning may prefer models that learn more quickly.
 
-### Results of federated learning
-<p style="text-align: center;">
-<img src="assests/fedAvg_train.png" width="49%"> 
-<img src="assests/fedAvg_test.png" width="50%"> 
-<img src="assests/fedAdam_train.png" width="49%"> 
-<img src="assests/fedAdam_test.png" width="50%" > 
-</p>
+## Conclusions & Future Work
 
-## Conclusions
-**Segmentation** <br>
-- The SAM model is good base model to use for segmentation but it needs a lot of hyperparameter tuning to adapt to unseen datasets
-
-**Pre-training on EWD** <br>
-- Appears to increase accuracy compared to base CLIP model <br>
-- Overall better first epoch accuracy <br>
-- Particularly relevant at lower learning rates <br>
-- Higher learning rates show barely any learning <br>
-
-**Federated learning**
-- Federated learning improves performance while maninting data privacy <br>
-- FedN needs more documentations, more robust operations, better server looks and better fault tolerance! <br>
-
- ## Future Work
-**Dataset, Segmentation, & Annotation** <br>
-- Quality of images made it hard to detect small flower species (only daisy and yarrow was used)  <br>
-- Better dataset annotation using pre-trained models to cover more species  <br>
-- Use of segmentation models with editing capabilities to build a better dataset  <br>
-- Exploration of unsupervised segmentation methods like U2seg  <br>
-
-**‘Real world’ application**  <br>
-- Continual learning and human feedback  <br>
-- Including, exploring different types of federated aggregation  <br>
-- GUI to support farmers with varying technical skills  <br>
-- Test whether model can be app-ified  <br>
+TODO
 
 ## Individual Contributions
 
