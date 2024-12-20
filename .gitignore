@@ -181,7 +181,6 @@ cython_debug/
 
 # QOL
 .vscode/
-*.png
 *.pt
 wandb/
 lightning_logs/
