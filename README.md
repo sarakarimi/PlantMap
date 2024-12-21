@@ -26,9 +26,9 @@ In hindsight, we should set up the entire repository using uv.
 ### Project Structure
 ```
 ├── assests
-├── fedn_supervised
-│   └── client
-│       └── config
+├── fedn_supervised         # The federated learning approach to finetune CLIP
+│   └── client              # The code for training/validating/building the FEDn client
+│       └── config          # The [hydra](https://hydra.cc/docs/intro/) config defining the training parameters
 ├── finetune_mae
 │   └── src
 │       ├── data
@@ -50,7 +50,7 @@ In hindsight, we should set up the entire repository using uv.
 │   │   ├── clip
 │   │   └── sam
 │   └── utils
-└── unsupervised_classification
+└── unsupervised_classification # Abandoned approach to classify flowers without class labels. 
 ```
 
 #### Create Masks
