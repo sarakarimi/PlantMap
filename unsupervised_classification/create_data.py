@@ -165,8 +165,8 @@ images = [ds['train'][i]['image'] for i in range(len(ds["train"]))]
 device = "cuda" if torch.cuda.is_available() else "cpu"
 
 with torch.inference_mode(), torch.autocast(device, dtype=torch.bfloat16):
-    for test_image in tqdm(images, desc="Processing images"):
+    for i, test_image in tqdm(enumerate(images), desc="Processing images"):
         test_image = np.array(test_image.convert("RGB"))
 
         masks = mask_generator_2.generate(test_image)
-        torch.save("../masks/mask.pt", masks)
+        torch.save(masks, f"../masks/mask-{i}.pt")
