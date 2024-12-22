@@ -4,32 +4,30 @@ import os
 
 from tqdm import tqdm
 from PIL import Image
+from datasets import load_dataset
+
 
 
 def main() -> None:
-    image_folder = "../data/Hyperlapse/"
-    mask_folder = "../masks/"
+    mask_folder = "masks/"
 
-    file_names = os.listdir(image_folder)
+
+    ds = load_dataset("gotdairyya/plant_images")
+    images = [ds['train'][i]['image'] for i in range(len(ds["train"]))]
 
     flowers = []
     with torch.no_grad():
-        with tqdm(file_names) as pbar:
-            for file_name in pbar:
-                if not file_name.endswith("JPG"):
+        with tqdm(enumerate(images)) as pbar:
+            for idx, image in pbar:
+                image_array = np.array(image)
+                masks_path = f"{mask_folder}/mask-{idx}.pt"
+                if not os.path.exists(masks_path):
                     continue
-                file_path = os.path.join(image_folder, file_name)
-                mask_file = file_name.replace("JPG", "pt")
-                mask_path = os.path.join(mask_folder, mask_file)
-
-                image_array = np.array(Image.open(file_path))
-                if not os.path.exists(mask_path):
-                    continue
-                masks = torch.load(mask_path)
+                masks = torch.load(masks_path)
 
                 for i, mask in enumerate(masks):
                     bbox = mask["bbox"]
-                    segmentation = mask["segmentation"].toarray()
+                    segmentation = mask["segmentation"]
                     size_x, size_y = segmentation.shape
 
                     x_min, y_min, width, height = bbox
@@ -42,13 +40,10 @@ def main() -> None:
                     cropped_image = masked_image[
                         y_min : y_min + height, x_min : x_min + width
                     ]
-                    cropped_image = image_array[
-                        y_min : y_min + height, x_min : x_min + width
-                    ]
                     flowers.append(cropped_image)
 
                     pbar.set_description_str(f"Progress: {i} / {len(masks)}")
-                torch.save(flowers, f"data2/{file_name}.pt")
+                torch.save(flowers, f"data/sample-{idx}.pt")
                 flowers = []
 
 
