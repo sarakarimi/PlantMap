@@ -14,7 +14,7 @@ def parse_args():
     parser.add_argument("--num_epochs", type=int, default=1000)
     parser.add_argument("--batch_size", type=int, default=64)
     parser.add_argument("--use_logger", action="store_true")
-    parser.add_argument("--checkpoint", type=str, default="model.ckpt")
+    parser.add_argument("--checkpoint", type=str, default="checkpoints/pretrain.ckpt")
     parser.add_argument("--vit", type=str, default="MAE") # options: MAE, clip, DINO
     return parser.parse_args()
 
