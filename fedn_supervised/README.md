@@ -5,7 +5,7 @@
 ```
 mkdir client_files
 ```
-Go to the FEDn [website](https://fedn.scaleoutsystems.com/projects/), navigate to the clients page to your project and download six client yaml files. 
+Go to the FEDn [website](https://fedn.scaleoutsystems.com/projects/), navigate to the clients page in your project and download six client yaml files. 
 Save these files under ```client_files/client{0..5}.yaml```.
 
 ## Create the initial seed file

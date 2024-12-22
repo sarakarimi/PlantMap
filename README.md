@@ -68,6 +68,11 @@ uv run finetune_model.py training.epochs=10 training.batch_size=128 model.dropou
 
 This works the same whether you use the base CLIP model, or load in one of the other four models.
 
+## Federated finetuning
+
+The default settings are the best settings we found in our local experiments. 
+You can find detailed instructions [here](fedn_supervised/README.md).
+
 ## Project members:
 
 Derya Akbaba - Linkoping University <br>
