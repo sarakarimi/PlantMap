@@ -1,27 +1,10 @@
 # PlantMap: Federated learning for segmentation, detection, and classification of weed species in aerial images taken from farm fields
 
-## Setup Environment
+## Setup the finetune environment using FEDn
 
-```
-conda create --prefix <path to new conda env> python=3.12
-conda activate <path or name>
-conda install -c conda-forge huggingface_hub
-cd /tmp # or any empty directory
-git clone https://github.com/facebookresearch/sam2.git
-cd sam2
-pip install torch torchvision numpy
-pip install -e .
-pip install -e ".[notebooks]"
-pip install scipy
-
-```
-
-#### Setup the finetune environment using FEDn
-
-To get familiar with it, we were using [uv](https://github.com/astral-sh/uv) rather than more common virtual environments like conda.
+This project uses [uv](https://github.com/astral-sh/uv) rather than more common virtual environments like conda.
 Install it using `curl -LsSf https://astral.sh/uv/install.sh | sh` (on Linux and macOS).
 No additional steps are needed to prepare the environment there.
-In hindsight, we should set up the entire repository using uv.
 
 ### Project Structure
 ```
@@ -53,39 +36,55 @@ In hindsight, we should set up the entire repository using uv.
 └── unsupervised_classification # Abandoned approach to classify flowers without class labels. 
 ```
 
-#### Create Masks
+## Unsupervised Classification
 
-We experienced with that during the early project stage.
+We abandoned these methods due their lack of performance.
 
+Go to the directory 
 ```
-# Place all images in data/Hyperlapse
+cd unsupervised_classification/
+```
+
+### Create the Necessary Datasets
+
+Prepare folders for caching preprocessed data. 
+```
+mkdir data
 mkdir masks
-mkdir test_results
-python scripts/huggingface_sam_test.py
-
+```
+Run the preprocessing files: 
+```
+uv run create_data.py
+uv run create_all_flowers.py
 ```
 
-#### Create Flower Dataset for Unsupervised Classification
+### Pretrain Masked-Autoencoder
+
+This code will pretrain the Masked-Autoencoder model on our dataset to learn relevant feature presentations. 
+Unfortunately, in the end pretraining didn't make any significant difference in the model's performance. You can find the default parameters in the files. 
+
+For ```--vit``` you can choose: 
+
+- MAE: for the masked-autoencoder
+- DINO: for the dino v2 model
+- CLIP: for the CLIP model
 
 ```
-mkdir masks
-conda activate <path or name>
-python unsupervised_classification/create_all_flowers.py
+uv run src/train_auto.py <params>
 ```
 
-#### Similarity Matching
+### Learn Similarities
 
-Due to laziness, the current code does only compare all flowers of a single picture.
+All ```src/train_sim{1..3}``` models train a model for similarity matching but using different loss functions. 
+The ```--checkpoint``` is required for the MAE model, i.e., it is necessary to pretrain a model with the ```train_auto.py``` script. 
 
 ```
-# Run the "Create Flower Dataset for Unsupervised Classification" step
-mkdir similarities
-
-conda activate <path or name>
-python unsupervised_classification/feature_matching.py
+src/train_sim1.py: Use SimCLR loss
+src/train_sim2.py: Use BYOL loss
+src/train_sim3.py: use MoCO loss 
 ```
 
-#### Running fine-tuning locally with different CLIP configs
+## Running fine-tuning locally with different CLIP configs
 
 First enter the `pretrain_clip` directory and ensure that you have `uv` installed. **NOTE:** This is only confirmed to work on a Linux machine (with or without GPU). MacOS is not supported and Windows is untested.
 
@@ -115,7 +114,7 @@ uv run finetune_model.py training.epochs=10 training.batch_size=128 model.dropou
 
 This works the same whether you use the base CLIP model, or load in one of the other four models.
 
-### Project members:
+## Project members:
 
 Derya Akbaba - Linkoping University <br>
 Sofia Andersson - Lund University <br>
