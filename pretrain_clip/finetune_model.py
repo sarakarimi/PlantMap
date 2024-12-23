@@ -651,6 +651,17 @@ def main(cfg: DictConfig) -> None:
 
     lr_monitor = LearningRateMonitor(logging_interval="epoch")
 
+    # Check for devices and ensure non-GPU cases are addressed properly
+    gpu_map = None
+    if torch.cuda.is_available():
+        if cfg.training.num_gpus > 1:
+            gpu_devices = cfg.training.num_gpus
+        else:
+            gpu_devices = [int(cfg.training.device[-1])]
+            gpu_map = {'cuda:1':'cuda:0'}
+    else:
+        gpu_devices = "auto"
+
     # Either finetune base model or load a pretrained model
     if cfg.model.finetune_checkpoint:
         checkpoint_path = hf_hub_download(
@@ -672,7 +683,7 @@ def main(cfg: DictConfig) -> None:
             )
         # Pretrained model was categorical
         else:
-            model = CLIPClassifier.load_from_checkpoint(checkpoint_path)
+            model = CLIPClassifier.load_from_checkpoint(checkpoint_path, map_location=gpu_map)
             model.classifier = nn.Linear(model.classifier.in_features, num_classes)
             model.accuracy = MulticlassAccuracy(num_classes=num_classes)
             model.lr = cfg.training.learning_rate
@@ -720,15 +731,6 @@ def main(cfg: DictConfig) -> None:
         # Freeze the feature extractor
         for param in model.clip_model.parameters():
             param.requires_grad = False
-
-    # Check for devices and ensure non-GPU cases are addressed properly
-    if torch.cuda.is_available():
-        if cfg.training.num_gpus > 1:
-            gpu_devices = cfg.training.num_gpus
-        else:
-            gpu_devices = [int(cfg.training.device[-1])]
-    else:
-        gpu_devices = "auto"
 
     trainer = Trainer(
         logger=[logger],
