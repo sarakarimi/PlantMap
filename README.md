@@ -1,10 +1,20 @@
 # PlantMap: Federated learning for segmentation, detection, and classification of weed species in aerial images taken from farm fields
 
-## Setup the finetune environment using FEDn
-
-This project uses [uv](https://github.com/astral-sh/uv) rather than more common virtual environments like conda.
-Install it using `curl -LsSf https://astral.sh/uv/install.sh | sh` (on Linux and macOS).
-No additional steps are needed to prepare the environment there.
+<!-- TABLE OF CONTENTS -->
+<details>
+  <summary>Table of Contents</summary>
+  <ol>
+    <li><a href="#project-structure">Project Structure</a></li>
+    <li><a href="#getting-started">Getting Started</a></li>
+    <li><a href="#project-members">Project members</a></li>
+    <li><a href="#introduction">Introduction</a></li>
+    <li><a href="#experiments-results">Experiments & Results</a></li>
+    <li><a href="#conclusions">Conclusions</a></li>
+    <li><a href="#future-work">Future Work</a></li>
+    <li><a href="#individual-contributions">Individual Contributions</a></li>
+    <li><a href="#references">References</a></li>
+  </ol>
+</details>
 
 ### Project Structure
 ```
@@ -39,7 +49,13 @@ No additional steps are needed to prepare the environment there.
 └── unsupervised_classification # Abandoned approach to classify flowers without class labels. 
 ```
 
+### Getting Started
 
+## Setup the finetune environment using FEDn
+
+This project uses [uv](https://github.com/astral-sh/uv) rather than more common virtual environments like conda.
+Install it using `curl -LsSf https://astral.sh/uv/install.sh | sh` (on Linux and macOS).
+No additional steps are needed to prepare the environment there.
 
 ## Running fine-tuning locally with different CLIP configs
 
