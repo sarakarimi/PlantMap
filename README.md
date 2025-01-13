@@ -12,15 +12,18 @@ No additional steps are needed to prepare the environment there.
 ├── fedn_supervised         # The federated learning approach to finetune CLIP
 │   └── client              # The code for training/validating/building the FEDn client
 │       └── config          # The [hydra](https://hydra.cc/docs/intro/) config defining the training parameters
-├── finetune_mae
+
+├── finetune_mae            # The code for finetuning the masked autoencoder.
 │   └── src
-│       ├── data
-│       ├── models
-│       └── utils
+│       ├── data            # Data loading and image preprocessing for vit-mae-base, clip-vit-base-patch32, and dinov2-base.
+│       ├── models          # Pytorch/Lightning boiler template classes for vit-mae-base, clip-vit-base-patch32, and dinov2-base models.
+│       └── utils           # Utility functions, SimilarityLoss, flower delineation, and dataset size.
+
 ├── pretrain_clip           # The code for pre-training CLIP on EWD and fine-tuning on drone dataset
 │   └── config              # Directory for Hydra configs for different types of model: basic, classifier, and contrastive
 │       ├── model           # Directory for configs related to the model
 │       └── training        # Directory for configs related to the training
+
 ├── sam_clip                # Code for automatic annotation and labeling of raw images using SAM+CLIP
 │   ├── config              # Model hyperparameters & configs
 │   ├── data                # Prompt tokens
