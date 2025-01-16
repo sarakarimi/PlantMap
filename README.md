@@ -1,10 +1,25 @@
 # PlantMap: Federated learning for segmentation, detection, and classification of weed species in aerial images taken from farm fields
 
-## Setup the finetune environment using FEDn
-
-This project uses [uv](https://github.com/astral-sh/uv) rather than more common virtual environments like conda.
-Install it using `curl -LsSf https://astral.sh/uv/install.sh | sh` (on Linux and macOS).
-No additional steps are needed to prepare the environment there.
+<!-- TABLE OF CONTENTS -->
+<details>
+  <summary>Table of Contents</summary>
+  <ol>
+    <li><a href="#project-structure">Project Structure</a></li>
+    <li><a href="#getting-started">Getting Started</a></li>
+    <li><a href="#project-members">Project members</a></li>
+    <li><a href="#introduction">Introduction</a>
+      <ul>
+        <li><a href="#scalable-solution">Scalable solution</a></li>
+        <li><a href="#machine-learning-methods">Machine Learning Methods</a></li>
+      </ul>
+    </li>
+    <li><a href="#experiments-results">Experiments & Results</a></li>
+    <li><a href="#conclusions">Conclusions</a></li>
+    <li><a href="#future-work">Future Work</a></li>
+    <li><a href="#individual-contributions">Individual Contributions</a></li>
+    <li><a href="#references">References</a></li>
+  </ol>
+</details>
 
 ### Project Structure
 ```
@@ -12,15 +27,18 @@ No additional steps are needed to prepare the environment there.
 ├── fedn_supervised         # The federated learning approach to finetune CLIP
 │   └── client              # The code for training/validating/building the FEDn client
 │       └── config          # The [hydra](https://hydra.cc/docs/intro/) config defining the training parameters
-├── finetune_mae
+
+├── finetune_mae            # The code for finetuning the masked autoencoder.
 │   └── src
-│       ├── data
-│       ├── models
-│       └── utils
+│       ├── data            # Data loading and image preprocessing for vit-mae-base, clip-vit-base-patch32, and dinov2-base.
+│       ├── models          # Pytorch/Lightning boiler template classes for vit-mae-base, clip-vit-base-patch32, and dinov2-base models.
+│       └── utils           # Utility functions, SimilarityLoss, flower delineation, and dataset size.
+
 ├── pretrain_clip           # The code for pre-training CLIP on EWD and fine-tuning on drone dataset
 │   └── config              # Directory for Hydra configs for different types of model: basic, classifier, and contrastive
 │       ├── model           # Directory for configs related to the model
 │       └── training        # Directory for configs related to the training
+
 ├── sam_clip                # Code for automatic annotation and labeling of raw images using SAM+CLIP
 │   ├── config              # Model hyperparameters & configs
 │   ├── data                # Prompt tokens
@@ -36,7 +54,13 @@ No additional steps are needed to prepare the environment there.
 └── unsupervised_classification # Abandoned approach to classify flowers without class labels. 
 ```
 
+### Getting Started
 
+## Setup the finetune environment using FEDn
+
+This project uses [uv](https://github.com/astral-sh/uv) rather than more common virtual environments like conda.
+Install it using `curl -LsSf https://astral.sh/uv/install.sh | sh` (on Linux and macOS).
+No additional steps are needed to prepare the environment there.
 
 ## Running fine-tuning locally with different CLIP configs
 
@@ -175,23 +199,6 @@ We finetune a masked-autoencoder, discard the decoder and use the encoder part o
 To train the model, we chose to compare two different approaches, [BYOL](https://arxiv.org/abs/2006.07733) [5] and [SimCLR](https://arxiv.org/abs/2002.05709) [6], both methods for learning visual representations.
 An encoder model maps each image into a vector. By normalizing the vector (unit vector) and comparing them using cosine-similarity, we get a probability of both images belonging to the same class or not.
 
-##### Challenges
-
-- The number of distinct flower classes is comparably low compared to the number of overall images
-- Just by looking on the raw data, it is clear that the dataset is not evenly distributed (class imbalance)
-- Many flowers of different classes look similar, e.g., all flowers with white blossoms.
-- SAM is not perfect, i.e., it predicts false positives
-
-#### (Semi-/Un-)supervised Classification
-
-We use SAM in order to get flower images without background as this is usually pretty accurate using a pretrained SAM2 model.
-
-For every possible wildflower, we select one candidate as reference image.
-We finetune a masked-autoencoder, discard the decoder and use the encoder part of the model to retrieve image features.
-
-To train the model, we chose to compare two different approaches, [BYOL](https://arxiv.org/abs/2006.07733) and [SimCLR](https://arxiv.org/abs/2002.05709), both methods for learning visual representations.
-An encoder model maps each image into a vector. By normalizing the vector (unit vector) and comparing them using cosine-similarity, we get a probability of both images belonging to the same class or not.
-
 <p style="text-align: center;">
 <img src="assests/unsupervised_classification.png" width="70%"> 
 </p>
@@ -199,9 +206,9 @@ An encoder model maps each image into a vector. By normalizing the vector (unit 
 ##### Challenges
 
 - The number of distinct flower classes is comparably low compared to the number of overall images
-- Just by looking on the raw data, it is clear that the dataset is not evenly distributed, i.e., unbalanced.
+- Just by looking on the raw data, it is clear that the dataset is not evenly distributed (class imbalance)
 - Many flowers of different classes look similar, e.g., all flowers with white blossoms.
-- SAM is not perfect, i.e., it predicts false positives and
+- SAM is not perfect, i.e., it predicts false positives
 
 #### Supervised Classification
 
