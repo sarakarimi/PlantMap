@@ -13,7 +13,7 @@
         <li><a href="#machine-learning-methods">Machine Learning Methods</a></li>
       </ul>
     </li>
-    <li><a href="#experiments-results">Experiments & Results</a></li>
+    <li><a href="#experiments-&-results">Experiments & Results</a></li>
     <li><a href="#conclusions">Conclusions</a></li>
     <li><a href="#future-work">Future Work</a></li>
     <li><a href="#individual-contributions">Individual Contributions</a></li>
