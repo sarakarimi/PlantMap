@@ -5,6 +5,11 @@ from transformers import ViTMAEForPreTraining
 
 
 class Model(L.LightningModule):
+    """
+    Model for pretraining the Masked Autoencoder on the flower images, retrieved by SAM. 
+    By masking the image, the model learns to predict the masked pixels.
+    The trained model can be used for fine-tuning on unsupervised classification tasks. 
+    """
     def __init__(self) -> None:
         super().__init__()
         self._model = ViTMAEForPreTraining.from_pretrained("facebook/vit-mae-base")

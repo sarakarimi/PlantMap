@@ -11,6 +11,9 @@ from transformers import Dinov2Model
 
 
 class MLP(nn.Module):
+    """
+    Helper class for the MLP used in the BYOL model.
+    """
     def __init__(self, input_dim, hidden_dim, output_dim):
         super().__init__()
         self.net = nn.Sequential(
@@ -25,6 +28,9 @@ class MLP(nn.Module):
 
 
 class Model(L.LightningModule):
+    """
+    Unsupervised model using the BYOL method for contrastive learning.
+    """
     def __init__(self, lr, checkpoint: str | None, vit: str = "MAE") -> None:
         super().__init__()
         self._lr = lr
@@ -53,12 +59,19 @@ class Model(L.LightningModule):
         return self._encoder2(pixel_values).last_hidden_state[:, 0]
 
     def training_step(self, batch, batch_idx: int) -> torch.Tensor:
+        """
+        Input: 2 btaches of the same images with different augmentations.
+        Output: The loss of the contrastive learning. 
+        """
         batch1, batch2 = batch
         loss = self.__shared_step(batch1, batch2)
         self.log("train/loss", loss, on_step=True, prog_bar=True)
         return loss
 
     def __shared_step(self, batch1, batch2):
+        """
+        BYOL step. See https://arxiv.org/abs/2006.07733 for more information.
+        """
         outputs1_online = self._mlp(
             self._encoder(batch1.pixel_values).last_hidden_state[:, 0]
         )
@@ -95,6 +108,10 @@ class Model(L.LightningModule):
         return [optimizer]
 
     def validation_step(self, batch, batch_idx) -> torch.Tensor:
+        """
+        Input: 2 btaches of the same images with different augmentations.
+        Output: The loss of the contrastive learning. 
+        """
         batch1, batch2 = batch
         outputs1 = self.forward(batch1.pixel_values)
         outputs2 = self.forward(batch2.pixel_values)
