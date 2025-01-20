@@ -17,6 +17,11 @@ from utils import get_dataset_indices, get_hydra_conf, load_model_from_cfg, load
 
 
 def main(in_model_path: str, out_json_path: str, cfg: DictConfig) -> None:
+    """
+    FedN validation call for the CLIP model.
+    It uses a supervised loss function to train the model.
+    The validation set is equal between all clients and is expected to be available on all devices.
+    """
     hyper_params = {
         "model": "CLIP",
         "batch_size": cfg.training.batch_size,
