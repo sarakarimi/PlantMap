@@ -20,6 +20,10 @@ def parse_args():
 
 
 def main():
+    """
+    Train the model using the MoCo method.
+    See https://arxiv.org/abs/1911.05722 for more information.
+    """
     args = parse_args()
     data_root = args.data_root
     num_epochs = args.num_epochs

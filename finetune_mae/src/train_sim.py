@@ -20,6 +20,10 @@ def parse_args():
 
 
 def main():
+    """
+    Trains the model using the contrastive learning method.
+    See https://arxiv.org/abs/2006.10029 for more information.
+    """
     args = parse_args()
     data_root = args.data_root
     num_epochs = args.num_epochs

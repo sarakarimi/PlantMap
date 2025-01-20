@@ -20,6 +20,11 @@ def parse_args():
 
 
 def main():
+    """
+    Pretrain the Masked Autoencoder on the flower images, retrieved by SAM.
+    By masking the image, the model learns to predict the masked pixels.
+    See https://arxiv.org/abs/2104.08501 for more information.
+    """
     args = parse_args()
     data_root = args.data_root
     num_epochs = args.num_epochs
