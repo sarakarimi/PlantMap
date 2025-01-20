@@ -9,6 +9,9 @@ from datasets import load_dataset
 
 
 def main() -> None:
+    """
+    Helper class to create all flowers from the masks created in a previous step using SAM. 
+    """
     mask_folder = "masks/"
 
 

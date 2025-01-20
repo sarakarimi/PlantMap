@@ -10,7 +10,7 @@ from lightning.pytorch.loggers import WandbLogger
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--data_root", type=str, default="data/")
+    parser.add_argument("--data_root", type=str, default="../data2")
     parser.add_argument("--num_epochs", type=int, default=10)
     parser.add_argument("--batch_size", type=int, default=64)
     parser.add_argument(
@@ -20,6 +20,11 @@ def parse_args():
 
 
 def main():
+    """
+    Pretrain the Masked Autoencoder on the flower images, retrieved by SAM.
+    By masking the image, the model learns to predict the masked pixels.
+    See https://arxiv.org/abs/2104.08501 for more information.
+    """
     args = parse_args()
     data_root = args.data_root
     num_epochs = args.num_epochs

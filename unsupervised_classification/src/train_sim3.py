@@ -10,16 +10,20 @@ from lightning.pytorch.loggers import WandbLogger
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--data_root", type=str, default="data")
+    parser.add_argument("--data_root", type=str, default="../data2")
     parser.add_argument("--num_epochs", type=int, default=1000)
     parser.add_argument("--batch_size", type=int, default=64)
     parser.add_argument("--use_logger", action="store_true")
-    parser.add_argument("--checkpoint", type=str, default="checkpoints/pretrain.ckpt")
+    parser.add_argument("--checkpoint", type=str, default="model.ckpt")
     parser.add_argument("--vit", type=str, default="MAE") # options: MAE, clip, DINO
     return parser.parse_args()
 
 
 def main():
+    """
+    Train the model using the MoCo method.
+    See https://arxiv.org/abs/1911.05722 for more information.
+    """
     args = parse_args()
     data_root = args.data_root
     num_epochs = args.num_epochs

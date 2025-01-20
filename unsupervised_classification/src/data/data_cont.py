@@ -9,6 +9,14 @@ from utils.no_flower_filter import no_flower_filter
 
 
 class NextImageBatchGenerator:
+    """
+    A RAM efficient generator for the image data.
+    Since having all the images in memory at once is not feasible, this generator
+    yields batches of images from the files.
+    The data is loaded from preprocessed files containing torch tensors of the images
+    retrieved from SAM and are augmented before being processed serving as the base
+    for contrastive loss training.
+    """
     def __init__(self, files: list[str], vit: str, bs: int = 64) -> None:
         self._bs = bs
         self._image_size = 224
@@ -65,6 +73,9 @@ class NextImageBatchGenerator:
             yield batch1, batch2
 
 class GeneratorDataset(IterableDataset):
+    """
+    This generator iterates through all batches until the end of the dataset.
+    """
     def __init__(self, files: list[str], vit: str, bs: int = 64) -> None:
         super().__init__()
         self.generator_func = NextImageBatchGenerator(files, vit, bs)

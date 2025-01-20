@@ -8,6 +8,9 @@ from transformers import ViTMAEModel, ViTImageProcessor
 
 
 def extract_features(processor: nn.Module, model: nn.Module, images: list[torch.Tensor]) -> torch.Tensor:
+    """
+    Retrieve the last hidden state of the model and pool the features.
+    """
     inputs = processor(images=images, return_tensors="pt")
     inputs["pixel_values"].shape
     with torch.no_grad():
@@ -18,6 +21,9 @@ def extract_features(processor: nn.Module, model: nn.Module, images: list[torch.
 
 
 def main() -> None:
+    """
+    Naive approach to test the similarity between images using the ViTMAE model using a pretrained model. 
+    """
     model_name = "facebook/vit-mae-base"  # Pretrained ViTMAE model
     model = ViTMAEModel.from_pretrained(model_name)
     model.eval()

@@ -8,6 +8,10 @@ from transformers import Dinov2Model
 
 
 class Model(L.LightningModule):
+    """
+    Using the contrastive learning method for unsupervised learning.
+    See https://arxiv.org/abs/2006.10029 for more information.
+    """
     def __init__(self, lr: float, checkpoint: str | None, vit: str = "MAE") -> None:
         super().__init__()
         self._lr = lr
@@ -32,6 +36,10 @@ class Model(L.LightningModule):
         return self._encoder(pixel_values).last_hidden_state[:, 0]
 
     def training_step(self, batch, batch_idx: int) -> torch.Tensor:
+        """
+        Input: 2 btaches of the same images with different augmentations.
+        Output: The loss of the contrastive learning. 
+        """
         batch1, batch2 = batch
         outputs1 = self.forward(batch1.pixel_values)
         outputs2 = self.forward(batch2.pixel_values)

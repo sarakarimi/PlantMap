@@ -10,6 +10,10 @@ from transformers import ViTMAEModel
 from utils.similarity_loss import SimilarityLoss
 
 class Model(L.LightningModule):
+    """
+    Contrastive learning model using the MoCo method.
+    See https://arxiv.org/abs/1911.05722 for more information.
+    """
     def __init__(self, checkpoint: str, vit: str ="MAE"):
         super().__init__()
         
@@ -54,6 +58,10 @@ class Model(L.LightningModule):
             param_k.data = param_k.data * 0.999 + param_q.data * (1. - 0.999)
     
     def training_step(self, batch, batch_idx):
+        """
+        Input: 2 btaches of the same images with different augmentations.
+        Output: The loss of the contrastive learning. 
+        """
         batch1, batch2 = batch  # Two augmented views of the same images
         batch1 = batch1.to(self.device)
         batch2 = batch2.to(self.device)
@@ -78,6 +86,10 @@ class Model(L.LightningModule):
         return loss
     
     def validation_step(self, batch, batch_idx) -> torch.Tensor:
+        """
+        Input: 2 btaches of the same images with different augmentations.
+        Output: The loss of the contrastive learning. 
+        """
         batch1, batch2 = batch
         outputs1 = self.forward(batch1)
         outputs2 = self.forward(batch2)

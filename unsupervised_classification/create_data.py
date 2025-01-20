@@ -75,6 +75,9 @@ def show_masks(
     input_labels=None,
     borders=True,
 ):
+    """
+    Show image with masks, optionally with points and boxes
+    """
     for i, (mask, score) in enumerate(zip(masks, scores)):
         plt.figure(figsize=(10, 10))
         plt.imshow(image)
@@ -92,6 +95,9 @@ def show_masks(
 
 
 def show_anns(anns, ax=None, borders=True):
+    """
+    Show bbox and masks of a list of annotations
+    """
     if len(anns) == 0:
         return
     sorted_anns = sorted(anns, key=(lambda x: x["area"]), reverse=True)

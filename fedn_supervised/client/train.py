@@ -20,6 +20,13 @@ from utils import load_model_from_cfg, load_parameters, save_parameters
 
 
 def main(in_model_path: str, out_model_path: str, cfg: DictConfig) -> None:
+    """
+    Train class for federated learning.
+    The data is expeceted to be on the device. 
+    Using a particular seed, the training data is split into 5 parts 
+    while the validation data is the same for all clients.
+    The training process is identical to the sam-clip training process.
+    """
     hyper_params = {
         "model": "CLIP",
         "batch_size": cfg.training.batch_size,

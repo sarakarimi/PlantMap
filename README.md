@@ -28,7 +28,7 @@
 │   └── client              # The code for training/validating/building the FEDn client
 │       └── config          # The [hydra](https://hydra.cc/docs/intro/) config defining the training parameters
 
-├── finetune_mae            # The code for finetuning the masked autoencoder.
+├── unsupervised_classification # The code for finetuning the masked autoencoder (Abandoned approach to classify flowers without class labels). 
 │   └── src
 │       ├── data            # Data loading and image preprocessing for vit-mae-base, clip-vit-base-patch32, and dinov2-base.
 │       ├── models          # Pytorch/Lightning boiler template classes for vit-mae-base, clip-vit-base-patch32, and dinov2-base models.
@@ -39,20 +39,19 @@
 │       ├── model           # Directory for configs related to the model
 │       └── training        # Directory for configs related to the training
 
-├── sam_clip                # Code for automatic annotation and labeling of raw images using SAM+CLIP
-│   ├── config              # Model hyperparameters & configs
-│   ├── data                # Prompt tokens
-│   │   └── resources       
-│   ├── models              # SAM and clip model integratetion
-│   │   ├── clip
-│   │   ├── detector
-│   │   └── sam
-│   ├── pretrained          # Pre-trained models' checkpoints
-│   │   ├── clip
-│   │   └── sam
-│   └── utils
-└── unsupervised_classification # Abandoned approach to classify flowers without class labels. 
-```
+└── sam_clip                # Code for automatic annotation and labeling of raw images using SAM+CLIP
+    ├── config              # Model hyperparameters & configs
+    ├── data                # Prompt tokens
+    │   └── resources       
+    ├── models              # SAM and clip model integratetion
+    │   ├── clip
+    │   ├── detector
+    │   └── sam
+    ├── pretrained          # Pre-trained models' checkpoints
+    │   ├── clip
+    │   └── sam
+    └── utils
+ ```
 
 ### Getting Started
 
