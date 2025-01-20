@@ -3,6 +3,9 @@ import torch.nn as nn
 
 
 class SimilarityLoss(nn.Module):
+    """
+    Helper class to compute the loss for the contrastive learning.
+    """
     def __init__(self, temperature=0.5):
         super().__init__()
         self.temperature = temperature
